@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "41273658110",
+    "firebase_url": "https://authapp-33810.firebaseio.com",
+    "project_id": "authapp-33810",
+    "storage_bucket": "authapp-33810.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41273658110:android:4b7f51e7f933e834d633af",
+        "android_client_info": {
+          "package_name": "com.saher.AuthApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA07jpMwGQnSQsY8VQU6wdyL9YNU-turLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41273658110:android:44f056e9239813b0d633af",
+        "android_client_info": {
+          "package_name": "com.saher.authapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41273658110-4rmsjn9ej6ka6m2ajd3hcnf2es2qoigf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.saher.authapp",
+            "certificate_hash": "92ad6ffb882f12b183366c5a309659fb0ed47b9f"
+          }
+        },
+        {
+          "client_id": "41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA07jpMwGQnSQsY8VQU6wdyL9YNU-turLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
