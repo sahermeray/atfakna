@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -92,12 +93,13 @@ public class View_Item_Activity extends AppCompatActivity {
         String price=et_price.getText().toString();
         String phone=et_phone.getText().toString();
         String description=et_description.getText().toString();
+        String id= FirebaseAuth.getInstance().getUid();
         if(name.trim().isEmpty()||location.trim().isEmpty()||price.trim().isEmpty()||phone.trim().isEmpty()||description.trim().isEmpty()){
             Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
             return;
         }
         CollectionReference itembookRef= FirebaseFirestore.getInstance().collection("Itembook");
-        itembookRef.add(new Item(name,location,price,phone,description));
+        itembookRef.add(new Item(name,location,price,phone,description,id));
         Toast.makeText(this,"item added",Toast.LENGTH_LONG).show();
         finish();
     }

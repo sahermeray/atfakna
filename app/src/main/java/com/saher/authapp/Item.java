@@ -1,22 +1,27 @@
 package com.saher.authapp;
 
 public class Item {
-    String name,location,price,phonenumber,description;
+    String name,location,price,phonenumber,description,id;
     public Item(){}
 
-    public Item(String name,String location,String price){
+    public Item(String name,String location,String price,String id){
         this.name=name;
         this.location=location;
         this.price=price;
+        this.id=id;
     }
 
-    public Item(String name, String location, String price, String phonenumber, String description) {
+    public Item(String name, String location, String price, String phonenumber, String description,String id) {
         this.name = name;
         this.location = location;
         this.price = price;
         this.phonenumber = phonenumber;
         this.description = description;
+        this.id=id;
     }
+    public String getId(){ return id;}
+
+    public void setId(String id){ this.id=id;}
 
     public String getName() {
         return name;

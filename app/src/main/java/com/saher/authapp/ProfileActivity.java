@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -45,8 +46,16 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
     private void setUpRecyclerView(){
-        Query query=itemRef.orderBy("name",Query.Direction.DESCENDING);
+       // Query query=itemRef.orderBy("name",Query.Direction.DESCENDING);
+        //FirestoreRecyclerOptions<Item>options=new FirestoreRecyclerOptions.Builder<Item>().setQuery(query,Item.class).build();
+        String id= FirebaseAuth.getInstance().getUid();
+
+        Query query=itemRef.whereEqualTo("id",id);
         FirestoreRecyclerOptions<Item>options=new FirestoreRecyclerOptions.Builder<Item>().setQuery(query,Item.class).build();
+
+
+
+
         adapter1=new ItemAdapter(options);
         RecyclerView rv1=findViewById(R.id.activity_profile_rv);
         rv1.setHasFixedSize(true);
