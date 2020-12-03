@@ -46,29 +46,29 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
     private void setUpRecyclerView(){
-       // Query query=itemRef.orderBy("name",Query.Direction.DESCENDING);
-        //FirestoreRecyclerOptions<Item>options=new FirestoreRecyclerOptions.Builder<Item>().setQuery(query,Item.class).build();
         String id= FirebaseAuth.getInstance().getUid();
-
         Query query=itemRef.whereEqualTo("id",id);
         FirestoreRecyclerOptions<Item>options=new FirestoreRecyclerOptions.Builder<Item>().setQuery(query,Item.class).build();
-
-
-
-
-        adapter1=new ItemAdapter(options);
+        adapter1=new ItemAdapter(options, new OnRecyclerViewItemClickListener() {
+            @Override
+            public void onItemClick(String Item_Id) {
+                Intent i=new Intent(getBaseContext(),View_Item_Activity.class);
+                i.putExtra("ITEM_ID",Item_Id);
+                startActivity(i);
+            }
+        },this);
         RecyclerView rv1=findViewById(R.id.activity_profile_rv);
         rv1.setHasFixedSize(true);
         rv1.setLayoutManager(new GridLayoutManager(this,2));
         rv1.setAdapter(adapter1);
     }
-    protected void onStart() {
 
+    protected void onStart() {
         super.onStart();
         adapter1.startListening();
     }
-    protected void onStop() {
 
+    protected void onStop() {
         super.onStop();
         adapter1.stopListening();
     }

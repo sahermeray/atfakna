@@ -13,5 +13,10 @@
         android:icon="@drawable/ic_delete"
         android:id="@+id/delete"
         app:showAsAction="always"/>
+    <item android:title="loveit"
+        android:icon="@drawable/ic_watchlist"
+        android:id="@+id/loveit"
+        app:showAsAction="always"/>
+
 
 </menu>

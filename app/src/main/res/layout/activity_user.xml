@@ -18,6 +18,7 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:id="@+id/user_activity_toolbar">
 
+
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.recyclerview.widget.RecyclerView

@@ -1,24 +1,45 @@
 package com.saher.authapp;
 
 public class Item {
-    String name,location,price,phonenumber,description,id;
+    String name,location,price,phonenumber,description,id,uniqueID,image;
     public Item(){}
 
-    public Item(String name,String location,String price,String id){
+    public Item(String name,String location,String price,String id,String uniqueID,String image){
         this.name=name;
         this.location=location;
         this.price=price;
         this.id=id;
+        this.uniqueID=uniqueID;
+        this.image=image;
+
     }
 
-    public Item(String name, String location, String price, String phonenumber, String description,String id) {
+    public Item(String name, String location, String price, String phonenumber, String description,String id,String uniqueID,String image) {
         this.name = name;
         this.location = location;
         this.price = price;
         this.phonenumber = phonenumber;
         this.description = description;
         this.id=id;
+        this.uniqueID=uniqueID;
+        this.image=image;
+
     }
+
+
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getUniqueID(){return uniqueID;}
+
+    public void setUniqueID(String uniqueID){this.uniqueID=uniqueID;}
+
     public String getId(){ return id;}
 
     public void setId(String id){ this.id=id;}

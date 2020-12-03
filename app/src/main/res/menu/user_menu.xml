@@ -7,13 +7,30 @@
     app:showAsAction="always"
     app:actionViewClass="androidx.appcompat.widget.SearchView"/>
     <item
-        android:id="@+id/profile"
-        android:title="prfile"
+        android:title="searchcondition"
+        android:id="@+id/spinner"
         app:showAsAction="always"
+        app:actionViewClass="android.widget.Spinner"
+        />
+    <item
+        android:id="@+id/profile"
+        android:title="My Items"
+        app:showAsAction="never"
         android:icon="@drawable/ic_profile"/>
+    <item
+        android:icon="@drawable/ic_watchlist"
+        android:id="@+id/watchlist"
+        app:showAsAction="never"
+        android:title="Watchlist"/>
     <item
         android:icon="@drawable/ic_logout"
         android:id="@+id/logout"
-        app:showAsAction="always"
-        android:title="logout"/>
+        app:showAsAction="never"
+        android:title="Logout"/>
+
+    <item
+        android:icon="@drawable/ic_about"
+        android:id="@+id/about"
+        app:showAsAction="never"
+        android:title="About"/>
 </menu>

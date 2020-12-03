@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.saher.authapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".View_Item_Activity"></activity>
+        <activity android:name=".WatchListActivity"></activity>
+        <activity android:name=".View_Item_Activity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".UserActivity" />
         <activity android:name=".ActivityLogin" />

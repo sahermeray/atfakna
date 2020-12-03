@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AuthApp</string>
+    <string-array name="search">
+        <item>item</item>
+        <item>location</item>
+        <item>more than</item>
+        <item>less than</item>
+    </string-array>
 </resources>
