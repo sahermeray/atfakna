@@ -35,6 +35,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Document;
+
 import java.util.UUID;
 
 public class View_Item_Activity extends AppCompatActivity {
@@ -206,7 +208,7 @@ public class View_Item_Activity extends AppCompatActivity {
 
     private void addtowatchlist(){
         loveit.setIcon(R.drawable.ic_loveit);
-        String userid= FirebaseAuth.getInstance().getUid();
+        final String userid= FirebaseAuth.getInstance().getUid();
         String itemid=item_id;
         UserItem ui=new UserItem(userid,itemid);
         userItemRef.add(ui);

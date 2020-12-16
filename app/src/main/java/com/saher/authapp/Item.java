@@ -12,6 +12,7 @@ public class Item {
         this.uniqueID=uniqueID;
         this.image=image;
 
+
     }
 
     public Item(String name, String location, String price, String phonenumber, String description,String id,String uniqueID,String image) {
@@ -24,8 +25,8 @@ public class Item {
         this.uniqueID=uniqueID;
         this.image=image;
 
-    }
 
+    }
 
 
     public String getImage() {
