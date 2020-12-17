@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                             if(!task.isSuccessful()){
                                 Toast.makeText(MainActivity.this.getApplicationContext(),"SignUp unsuccessful",Toast.LENGTH_LONG).show();
                             }else{
-                                startActivity(new Intent(MainActivity.this,UserActivity.class));
+                                startActivity(new Intent(MainActivity.this,HomeActivity.class));
                             }
                         }
                     });
