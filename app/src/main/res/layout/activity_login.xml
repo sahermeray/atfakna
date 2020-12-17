@@ -31,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/loginEmail"
+        android:text="a.ahmad@example.com"
         android:hint="Email"
         android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,6 +43,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/loginpaswd"
         android:hint="Password"
+            android:text="123456"
         android:inputType="numberPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
     <Button
