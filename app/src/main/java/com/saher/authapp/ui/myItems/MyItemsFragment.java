@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.saher.authapp.activity.EditItemActivity;
 import com.saher.authapp.model.Item;
 import com.saher.authapp.adapter.ItemAdapter;
 import com.saher.authapp.OnRecyclerViewItemClickListener;
@@ -59,7 +60,7 @@ public class MyItemsFragment extends Fragment {
         adapter = new ItemAdapter(options, new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String Item_Id) {
-                Intent i = new Intent(getContext(), ViewItemActivity.class);
+                Intent i = new Intent(getContext(), EditItemActivity.class);
                 i.putExtra("ITEM_ID", Item_Id);
                 startActivity(i);
             }

@@ -28,9 +28,10 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="?attr/listPreferredItemPaddingLeft">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
@@ -44,93 +45,79 @@
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
                         android:background="@drawable/ic_shopping"
+                        android:contentDescription="@string/item_image"
                         android:fitsSystemWindows="true"
                         android:scaleType="centerCrop"
+                        app:boxBackgroundMode="outline"
                         app:layout_collapseMode="parallax"
-                        app:layout_collapseParallaxMultiplier="0.5"
-                        android:contentDescription="@string/item_image" />
+                        app:layout_collapseParallaxMultiplier="0.5" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="outline"
-                app:errorTextColor="@color/colorAccent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_view_item_name"
+            <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Enter the item"
-                    android:inputType="text"
-                    android:textAlignment="center" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="outline"
-                app:errorTextColor="@color/colorAccent">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_view_item_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Enter your location"
-                    android:inputType="text"
-                    android:textAlignment="center" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                            android:id="@+id/item_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Item Title"
+                            android:textSize="24sp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="outline"
-                app:errorTextColor="@color/colorAccent">
+                    <TextView
+                            android:id="@+id/item_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="15000"
+                            android:textColor="@color/colorPrice"
+                            android:textSize="24sp" />
+                </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_view_item_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Enter the price"
-                    android:inputType="number"
-                    android:textAlignment="center" />
-            </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                        android:id="@+id/activity_view_item_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:drawableLeft="@drawable/ic_baseline_location_on_24"
+                        android:text="Homs, Syria" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="outline"
-                app:errorTextColor="@color/colorAccent">
+                <TextView
+                        android:id="@+id/activity_view_item_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+                        android:textSize="16dp"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:layout_marginBottom="@dimen/margin_5dp"
+                        />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_view_item_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Enter your phone number"
-                    android:inputType="phone"
-                    android:textAlignment="center" />
-            </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                        android:id="@+id/activity_view_item_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:drawableLeft="@drawable/ic_baseline_local_phone_24"
+                        android:text="+963123123"
+                        android:textSize="18sp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxBackgroundMode="outline"
-                app:errorTextColor="@color/colorAccent">
+                <TextView
+                        android:id="@+id/activity_view_item_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:drawableLeft="@drawable/ic_baseline_alternate_email_24"
+                        android:text="tom@example.com"
+                        android:textSize="18sp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_view_item_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Enter item's description"
-                    android:inputType="textImeMultiLine"
-                    android:textAlignment="center" />
-            </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
 
         </LinearLayout>
 
