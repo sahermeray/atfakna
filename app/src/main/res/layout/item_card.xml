@@ -11,8 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:orientation="vertical"
->
+            android:orientation="vertical">
 
         <ImageView
                 android:id="@+id/item_layout_iv"

@@ -18,15 +18,23 @@ import com.saher.authapp.R;
 import com.saher.authapp.model.Item;
 import com.squareup.picasso.Picasso;
 
-public class ItemAdapter extends FirestoreRecyclerAdapter<Item,ItemAdapter.ItemViewHolder> {
+public class ItemAdapter extends FirestoreRecyclerAdapter<Item, ItemAdapter.ItemViewHolder> {
     OnRecyclerViewItemClickListener listener;
     Context context;
+    int layout;
 
-
-    public ItemAdapter(@NonNull FirestoreRecyclerOptions<Item> options,OnRecyclerViewItemClickListener listener,Context context) {
+    public ItemAdapter(@NonNull FirestoreRecyclerOptions<Item> options, OnRecyclerViewItemClickListener listener, Context context) {
         super(options);
-        this.listener=listener;
-        this.context=context;
+        this.listener = listener;
+        this.context = context;
+        layout = R.layout.item_card;
+    }
+
+    public ItemAdapter(int layout, @NonNull FirestoreRecyclerOptions<Item> options, OnRecyclerViewItemClickListener listener, Context context) {
+        super(options);
+        this.listener = listener;
+        this.context = context;
+        this.layout = layout;
     }
 
     @Override
@@ -44,26 +52,25 @@ public class ItemAdapter extends FirestoreRecyclerAdapter<Item,ItemAdapter.ItemV
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         return new ItemViewHolder(v);
     }
 
 
-
-    class ItemViewHolder extends RecyclerView.ViewHolder{
-        TextView tv_name,tv_location,tv_price;
+    class ItemViewHolder extends RecyclerView.ViewHolder {
+        TextView tv_name, tv_location, tv_price;
         ImageView iv_item;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv_name=itemView.findViewById(R.id.item_layout_name);
-            tv_location=itemView.findViewById(R.id.item_layout_location);
-            tv_price=itemView.findViewById(R.id.item_layout_price);
-            iv_item=itemView.findViewById(R.id.item_layout_iv);
+            tv_name = itemView.findViewById(R.id.item_layout_name);
+            tv_location = itemView.findViewById(R.id.item_layout_location);
+            tv_price = itemView.findViewById(R.id.item_layout_price);
+            iv_item = itemView.findViewById(R.id.item_layout_iv);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String itemid=String.valueOf(tv_name.getTag());
+                    String itemid = String.valueOf(tv_name.getTag());
                     listener.onItemClick(itemid);
                 }
             });
