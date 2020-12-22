@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -57,7 +58,7 @@ public class MyItemsFragment extends Fragment {
         String id = FirebaseAuth.getInstance().getUid();
         Query query = itemRef.whereEqualTo("id", id);
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>().setQuery(query, Item.class).build();
-        adapter = new ItemAdapter(options, new OnRecyclerViewItemClickListener() {
+        adapter = new ItemAdapter(R.layout.item_list_item, options, new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String Item_Id) {
                 Intent i = new Intent(getContext(), EditItemActivity.class);
@@ -68,7 +69,7 @@ public class MyItemsFragment extends Fragment {
         adapter.startListening();
         adapter.notifyDataSetChanged();
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }
 }

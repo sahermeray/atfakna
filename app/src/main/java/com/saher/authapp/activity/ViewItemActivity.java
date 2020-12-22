@@ -76,16 +76,11 @@ public class ViewItemActivity extends AppCompatActivity {
         comingfromuseractivity = intent.getIntExtra("COMING_FROM_USER_ACTIVITY", 0);
         item_id = intent.getStringExtra("ITEM_ID");
         if (comingfromuseractivity == 0) {
-            if (item_id == null) {
-                enableFields();
-                clearFields();
-            } else {
+            if (item_id != null) {
                 fillItemToFields(item_id);
-                disableFields();
             }
         } else {
             fillItemToFields(item_id);
-            disableFields();
         }
     }
 
@@ -108,16 +103,6 @@ public class ViewItemActivity extends AppCompatActivity {
         });
     }
 
-    private void disableFields() {
-    }
-
-    private void enableFields() {
-    }
-
-    private void clearFields() {
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_item_menu, menu);
@@ -125,24 +110,11 @@ public class ViewItemActivity extends AppCompatActivity {
         edit = menu.findItem(R.id.edit);
         delete = menu.findItem(R.id.delete);
         loveit = menu.findItem(R.id.loveit);
-
-        if (item_id == null) {
-            save.setVisible(true);
-            edit.setVisible(false);
-            delete.setVisible(false);
-            loveit.setVisible(false);
-        } else if (comingfromuseractivity == 0) {
-            save.setVisible(false);
-            edit.setVisible(true);
-            delete.setVisible(true);
-            loveit.setVisible(false);
-        } else {
-            save.setVisible(false);
-            edit.setVisible(false);
-            delete.setVisible(false);
-            loveit.setVisible(true);
-            loveit.setIcon(R.drawable.ic_watchlist);
-        }
+        save.setVisible(false);
+        edit.setVisible(false);
+        delete.setVisible(false);
+        loveit.setVisible(true);
+        loveit.setIcon(R.drawable.ic_watchlist);
         return true;
 
     }
@@ -158,7 +130,6 @@ public class ViewItemActivity extends AppCompatActivity {
                 save.setVisible(true);
                 delete.setVisible(false);
                 edit.setVisible(false);
-                enableFields();
                 return true;
             case R.id.delete:
                 deleteItem(item_id);

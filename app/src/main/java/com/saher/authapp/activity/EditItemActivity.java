@@ -153,24 +153,10 @@ public class EditItemActivity extends AppCompatActivity {
          edit = menu.findItem(R.id.edit);
          delete = menu.findItem(R.id.delete);
          loveit=menu.findItem(R.id.loveit);
-
-        if (item_id ==null) {
-            save.setVisible(true);
-            edit.setVisible(false);
-            delete.setVisible(false);
-            loveit.setVisible(false);
-        } else
-            if(comingfromuseractivity==0) {
-            save.setVisible(false);
-            edit.setVisible(true);
-            delete.setVisible(true);
-            loveit.setVisible(false);
-        }else{
-                save.setVisible(false);
-                edit.setVisible(false);
-                delete.setVisible(false);
-                loveit.setVisible(true);
-                loveit.setIcon(R.drawable.ic_watchlist);}
+        save.setVisible(false);
+        edit.setVisible(true);
+        delete.setVisible(true);
+        loveit.setVisible(false);
         return true;
 
     }
