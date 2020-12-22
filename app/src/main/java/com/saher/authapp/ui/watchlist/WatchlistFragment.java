@@ -57,7 +57,8 @@ public class WatchlistFragment extends Fragment {
 
     private void setUpRecyclerView() {
         String id = FirebaseAuth.getInstance().getUid();
-        Query query = itemRef.whereEqualTo("id", id);;
+//        Query query = itemRef.whereEqualTo("id", id);
+        Query query = itemRef;
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>().setQuery(query, Item.class).build();
         adapter = new ItemAdapter(R.layout.item_list_item, options, new OnRecyclerViewItemClickListener() {
             @Override
