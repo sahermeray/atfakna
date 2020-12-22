@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,19 +11,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.saher.authapp.OnRecyclerViewItemClickListener;
+import com.saher.authapp.R;
+import com.saher.authapp.adapter.ItemAdapter;
+import com.saher.authapp.model.Item;
 
 public class UserActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
@@ -61,7 +61,7 @@ public class UserActivity extends AppCompatActivity {
                                 adapter=new ItemAdapter(options1, new OnRecyclerViewItemClickListener() {
                                     @Override
                                     public void onItemClick(String Item_Id) {
-                                        Intent i=new Intent(getBaseContext(),View_Item_Activity.class);
+                                        Intent i=new Intent(getBaseContext(), ViewItemActivity.class);
                                         i.putExtra("COMING_FROM_USER_ACTIVITY",1);
                                         i.putExtra("ITEM_ID",Item_Id);
                                         startActivity(i);
@@ -83,7 +83,7 @@ public class UserActivity extends AppCompatActivity {
                                 adapter=new ItemAdapter(options2, new OnRecyclerViewItemClickListener() {
                                     @Override
                                     public void onItemClick(String Item_Id) {
-                                        Intent i=new Intent(getBaseContext(),View_Item_Activity.class);
+                                        Intent i=new Intent(getBaseContext(), ViewItemActivity.class);
                                         i.putExtra("COMING_FROM_USER_ACTIVITY",1);
                                         i.putExtra("ITEM_ID",Item_Id);
                                         startActivity(i);
@@ -116,7 +116,7 @@ public class UserActivity extends AppCompatActivity {
         adapter=new ItemAdapter(options, new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String Item_Id) {
-                Intent i=new Intent(getBaseContext(),View_Item_Activity.class);
+                Intent i=new Intent(getBaseContext(), ViewItemActivity.class);
                 i.putExtra("COMING_FROM_USER_ACTIVITY",1);
                 i.putExtra("ITEM_ID",Item_Id);
                 startActivity(i);
@@ -143,16 +143,9 @@ public class UserActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout:
-                Intent i =new Intent(UserActivity.this,ActivityLogin.class);
+                Intent i =new Intent(UserActivity.this, LoginActivity.class);
                 startActivity(i);
                 break;
-            case R.id.profile:
-                Intent intent=new Intent(UserActivity.this,ProfileActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.watchlist:
-                Intent in=new Intent(UserActivity.this,WatchListActivity.class);
-                startActivity(in);
         }
         return true;
     }

@@ -13,13 +13,13 @@
 
     <fragment
             android:id="@+id/nav_gallery"
-            android:name="com.saher.authapp.ui.gallery.GalleryFragment"
+            android:name="com.saher.authapp.ui.myItems.MyItemsFragment"
             android:label="@string/menu_gallery"
-            tools:layout="@layout/fragment_gallery" />
+            tools:layout="@layout/fragment_my_items" />
 
     <fragment
             android:id="@+id/nav_slideshow"
-            android:name="com.saher.authapp.ui.slideshow.SlideshowFragment"
+            android:name="com.saher.authapp.ui.watchlist.WatchlistFragment"
             android:label="@string/menu_slideshow"
-            tools:layout="@layout/fragment_slideshow" />
+            tools:layout="@layout/fragment_watchlist" />
 </navigation>

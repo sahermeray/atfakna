@@ -1,4 +1,4 @@
-package com.saher.authapp.ui.gallery;
+package com.saher.authapp.ui.watchlist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.saher.authapp.R;
 
-public class GalleryFragment extends Fragment {
+public class WatchlistFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private WatchlistViewModel watchlistViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-//        final TextView textView = root.findViewById(R.id.text_gallery);
-//        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        watchlistViewModel =
+                new ViewModelProvider(this).get(WatchlistViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_watchlist, container, false);
+//        final TextView textView = root.findViewById(R.id.text_slideshow);
+//        watchlistViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
 //            @Override
 //            public void onChanged(@Nullable String s) {
 //                textView.setText(s);

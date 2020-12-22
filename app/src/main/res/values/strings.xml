@@ -17,4 +17,6 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">My Items</string>
     <string name="menu_slideshow">Watch list</string>
+    <string name="add_a_new_item">Add a new item</string>
+    <string name="item_image">item image</string>
 </resources>

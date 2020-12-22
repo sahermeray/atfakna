@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.saher.authapp.R;
 
 public class MainActivity extends AppCompatActivity {
     EditText emailId,passwd;
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-               Intent i=new Intent(MainActivity.this,ActivityLogin.class);
+               Intent i=new Intent(MainActivity.this, LoginActivity.class);
                startActivity(i);
             }
         });

@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.model;
 
 public class UserItem {
     String userId;

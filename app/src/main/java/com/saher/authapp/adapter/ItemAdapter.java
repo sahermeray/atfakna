@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.adapter;
 
 import android.content.Context;
 import android.net.Uri;
@@ -13,11 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.saher.authapp.OnRecyclerViewItemClickListener;
+import com.saher.authapp.R;
+import com.saher.authapp.model.Item;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 public class ItemAdapter extends FirestoreRecyclerAdapter<Item,ItemAdapter.ItemViewHolder> {
     OnRecyclerViewItemClickListener listener;
@@ -45,7 +44,7 @@ public class ItemAdapter extends FirestoreRecyclerAdapter<Item,ItemAdapter.ItemV
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout,parent,false);
+        View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card,parent,false);
         return new ItemViewHolder(v);
     }
 

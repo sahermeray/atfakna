@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
@@ -24,22 +23,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.saher.authapp.R;
+import com.saher.authapp.model.Item;
+import com.saher.authapp.model.UserItem;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
 
 import java.util.UUID;
 
-public class View_Item_Activity extends AppCompatActivity {
+public class ViewItemActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQ_CODE = 1;
     Toolbar viewItemToolbar;
     TextInputEditText et_name, et_location, et_price, et_phone, et_description;
@@ -61,9 +59,10 @@ public class View_Item_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view__item_);
-        viewItemToolbar = findViewById(R.id.view_item_activity_toolbar);
+        setContentView(R.layout.activity_view_item);
+        viewItemToolbar = findViewById(R.id.item_activity_toolbar);
         setSupportActionBar(viewItemToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         et_name = findViewById(R.id.activity_view_item_name);
         et_location = findViewById(R.id.activity_view_item_location);
         et_price = findViewById(R.id.activity_view_item_price);
@@ -110,7 +109,7 @@ public class View_Item_Activity extends AppCompatActivity {
       et_phone.setText(it.getPhonenumber());
       et_description.setText(it.getDescription());
           if(it.getImage()!=null&&!it.getImage().isEmpty()){
-             Picasso.with(View_Item_Activity.this).load(Uri.parse(it.getImage())).into(iv);
+             Picasso.with(ViewItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
           }
           else{iv.setImageResource(R.drawable.ic_shopping);}
       }
@@ -173,6 +172,7 @@ public class View_Item_Activity extends AppCompatActivity {
 
     }
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -191,8 +191,15 @@ public class View_Item_Activity extends AppCompatActivity {
             case R.id.loveit:
                 addtowatchlist();
                 return true;
+            case android.R.id.home:
+                // app icon in action bar clicked; go home
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
     private void deleteItem(String itemId){
@@ -212,7 +219,7 @@ public class View_Item_Activity extends AppCompatActivity {
         String itemid=item_id;
         UserItem ui=new UserItem(userid,itemid);
         userItemRef.add(ui);
-        Toast.makeText(View_Item_Activity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
+        Toast.makeText(ViewItemActivity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
 
     }
     
@@ -239,7 +246,7 @@ public class View_Item_Activity extends AppCompatActivity {
         Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(View_Item_Activity.this,"your item is uploading...",Toast.LENGTH_LONG).show();
+                Toast.makeText(ViewItemActivity.this,"your item is uploading...",Toast.LENGTH_LONG).show();
             }
         }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -255,10 +262,10 @@ public class View_Item_Activity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     Uri downloadUri=task.getResult();
                     itemRef.add(new Item(name,location,price,phone,description,id,uniqueID,downloadUri.toString()));
-                    Toast.makeText(View_Item_Activity.this,"item added",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ViewItemActivity.this,"item added",Toast.LENGTH_LONG).show();
                     finish();
                 }else{
-                    Toast.makeText(View_Item_Activity.this,"error",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ViewItemActivity.this,"error",Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -281,7 +288,7 @@ public class View_Item_Activity extends AppCompatActivity {
             Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(View_Item_Activity.this,"your item is being edited...",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ViewItemActivity.this,"your item is being edited...",Toast.LENGTH_LONG).show();
                 }
             }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -302,12 +309,12 @@ public class View_Item_Activity extends AppCompatActivity {
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 DocumentSnapshot dd=queryDocumentSnapshots.getDocuments().get(0);
                                 dd.getReference().set(itt);
-                                Toast.makeText(View_Item_Activity.this,"item edited",Toast.LENGTH_LONG).show();
+                                Toast.makeText(ViewItemActivity.this,"item edited",Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         });
                     }else{
-                        Toast.makeText(View_Item_Activity.this,"error",Toast.LENGTH_LONG).show();
+                        Toast.makeText(ViewItemActivity.this,"error",Toast.LENGTH_LONG).show();
                     }
                 }
             });
