@@ -26,7 +26,6 @@
         <activity
                 android:name=".activity.EditItemActivity"
                 android:parentActivityName=".activity.HomeActivity" />
-        <activity android:name=".activity.UserActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>
