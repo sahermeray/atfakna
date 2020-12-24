@@ -19,4 +19,6 @@
     <string name="menu_slideshow">Watch list</string>
     <string name="add_a_new_item">Add a new item</string>
     <string name="item_image">item image</string>
+    <string name="nav_logout">Logout</string>
+    <string name="bar_search">Search</string>
 </resources>
