@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.model;
 
 public class Item {
     String name,location,price,phonenumber,description,id,uniqueID,image;

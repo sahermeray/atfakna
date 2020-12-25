@@ -1,4 +1,4 @@
-package com.saher.authapp;
+package com.saher.authapp.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +16,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.saher.authapp.R;
 
-public class MainActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
     EditText emailId,passwd;
     Button btnSignUp;
     TextView signIn;
@@ -49,20 +49,20 @@ public class MainActivity extends AppCompatActivity {
                     passwd.setError("set your password");
                     passwd.requestFocus();
                 }else if(emailID.isEmpty()&&paswd.isEmpty()){
-                    Toast.makeText(MainActivity.this,"fields empty",Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this,"fields empty",Toast.LENGTH_LONG).show();
                 }else if(!(emailID.isEmpty()&&paswd.isEmpty())){
-                    firebaseAuth.createUserWithEmailAndPassword(emailID,paswd).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                    firebaseAuth.createUserWithEmailAndPassword(emailID,paswd).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(!task.isSuccessful()){
-                                Toast.makeText(MainActivity.this.getApplicationContext(),"SignUp unsuccessful",Toast.LENGTH_LONG).show();
+                                Toast.makeText(SignUpActivity.this.getApplicationContext(),"SignUp unsuccessful",Toast.LENGTH_LONG).show();
                             }else{
-                                startActivity(new Intent(MainActivity.this,UserActivity.class));
+                                startActivity(new Intent(SignUpActivity.this,HomeActivity.class));
                             }
                         }
                     });
                 }else{
-                    Toast.makeText(MainActivity.this,"error",Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this,"error",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-               Intent i=new Intent(MainActivity.this,ActivityLogin.class);
+               Intent i=new Intent(SignUpActivity.this, LoginActivity.class);
                startActivity(i);
             }
         });

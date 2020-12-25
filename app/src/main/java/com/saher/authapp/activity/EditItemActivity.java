@@ -1,9 +1,4 @@
-package com.saher.authapp;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+package com.saher.authapp.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,11 +7,16 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-//import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,25 +24,27 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.saher.authapp.R;
+import com.saher.authapp.model.Item;
+import com.saher.authapp.model.UserItem;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
 
 import java.util.UUID;
 
-public class View_Item_Activity extends AppCompatActivity {
+//import com.bumptech.glide.Glide;
+
+public class EditItemActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQ_CODE = 1;
     Toolbar viewItemToolbar;
-    TextInputEditText et_name, et_location, et_price, et_phone, et_description;
+    EditText et_name, et_price, et_phone, et_description;
+    EditText et_location;
     String item_id=null;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     final CollectionReference itemRef=db.collection("Itembook");
@@ -61,8 +63,8 @@ public class View_Item_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view__item_);
-        viewItemToolbar = findViewById(R.id.view_item_activity_toolbar);
+        setContentView(R.layout.activity_edit_item);
+        viewItemToolbar = findViewById(R.id.edit_item_activity_toolbar);
         setSupportActionBar(viewItemToolbar);
         et_name = findViewById(R.id.activity_view_item_name);
         et_location = findViewById(R.id.activity_view_item_location);
@@ -110,7 +112,7 @@ public class View_Item_Activity extends AppCompatActivity {
       et_phone.setText(it.getPhonenumber());
       et_description.setText(it.getDescription());
           if(it.getImage()!=null&&!it.getImage().isEmpty()){
-             Picasso.with(View_Item_Activity.this).load(Uri.parse(it.getImage())).into(iv);
+             Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
           }
           else{iv.setImageResource(R.drawable.ic_shopping);}
       }
@@ -151,24 +153,10 @@ public class View_Item_Activity extends AppCompatActivity {
          edit = menu.findItem(R.id.edit);
          delete = menu.findItem(R.id.delete);
          loveit=menu.findItem(R.id.loveit);
-
-        if (item_id ==null) {
-            save.setVisible(true);
-            edit.setVisible(false);
-            delete.setVisible(false);
-            loveit.setVisible(false);
-        } else
-            if(comingfromuseractivity==0) {
-            save.setVisible(false);
-            edit.setVisible(true);
-            delete.setVisible(true);
-            loveit.setVisible(false);
-        }else{
-                save.setVisible(false);
-                edit.setVisible(false);
-                delete.setVisible(false);
-                loveit.setVisible(true);
-                loveit.setIcon(R.drawable.ic_watchlist);}
+        save.setVisible(false);
+        edit.setVisible(true);
+        delete.setVisible(true);
+        loveit.setVisible(false);
         return true;
 
     }
@@ -212,7 +200,7 @@ public class View_Item_Activity extends AppCompatActivity {
         String itemid=item_id;
         UserItem ui=new UserItem(userid,itemid);
         userItemRef.add(ui);
-        Toast.makeText(View_Item_Activity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
+        Toast.makeText(EditItemActivity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
 
     }
     
@@ -239,7 +227,7 @@ public class View_Item_Activity extends AppCompatActivity {
         Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(View_Item_Activity.this,"your item is uploading...",Toast.LENGTH_LONG).show();
+                Toast.makeText(EditItemActivity.this,"your item is uploading...",Toast.LENGTH_LONG).show();
             }
         }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -255,10 +243,10 @@ public class View_Item_Activity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     Uri downloadUri=task.getResult();
                     itemRef.add(new Item(name,location,price,phone,description,id,uniqueID,downloadUri.toString()));
-                    Toast.makeText(View_Item_Activity.this,"item added",Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditItemActivity.this,"item added",Toast.LENGTH_LONG).show();
                     finish();
                 }else{
-                    Toast.makeText(View_Item_Activity.this,"error",Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditItemActivity.this,"error",Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -281,7 +269,7 @@ public class View_Item_Activity extends AppCompatActivity {
             Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(View_Item_Activity.this,"your item is being edited...",Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditItemActivity.this,"your item is being edited...",Toast.LENGTH_LONG).show();
                 }
             }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -302,12 +290,12 @@ public class View_Item_Activity extends AppCompatActivity {
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 DocumentSnapshot dd=queryDocumentSnapshots.getDocuments().get(0);
                                 dd.getReference().set(itt);
-                                Toast.makeText(View_Item_Activity.this,"item edited",Toast.LENGTH_LONG).show();
+                                Toast.makeText(EditItemActivity.this,"item edited",Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         });
                     }else{
-                        Toast.makeText(View_Item_Activity.this,"error",Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditItemActivity.this,"error",Toast.LENGTH_LONG).show();
                     }
                 }
             });
