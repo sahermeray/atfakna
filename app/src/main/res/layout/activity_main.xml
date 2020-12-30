@@ -48,15 +48,9 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign up"
+        android:text="Create Account"
         android:id="@+id/btnSignUp"
         android:layout_marginTop="10dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TVSignIn"
-        android:text="Already have an acount"
-        android:textSize="20dp"
-        android:textAlignment="center"/>
+
 </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
