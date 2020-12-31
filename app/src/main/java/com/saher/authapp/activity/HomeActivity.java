@@ -51,17 +51,19 @@ public class HomeActivity extends AppCompatActivity {
 
         FirebaseUser useriuser=firebaseAuth.getCurrentUser();
         if(useriuser!=null){
-            navigationView.getMenu().getItem(1).setVisible(true);
-            navigationView.getMenu().getItem(0).setVisible(true);
-            navigationView.getMenu().getItem(2).setVisible(true);
-            navigationView.getMenu().getItem(3).setVisible(true);
-            navigationView.getMenu().getItem(4).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_home).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_slideshow).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_create_account).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         }else{
-            navigationView.getMenu().getItem(1).setVisible(false);
-            navigationView.getMenu().getItem(0).setVisible(true);
-            navigationView.getMenu().getItem(2).setVisible(false);
-            navigationView.getMenu().getItem(3).setVisible(false);
-            navigationView.getMenu().getItem(4).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_home).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_slideshow).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_create_account).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
         }
 
 
@@ -87,7 +89,11 @@ public class HomeActivity extends AppCompatActivity {
                 }else if(id==R.id.nav_create_account){
                     Intent i=new Intent(getApplicationContext(),SignUpActivity.class);
                     startActivity(i);
+                }else if(id==R.id.nav_login){
+                    Intent intt=new Intent(getApplicationContext(),LoginActivity.class);
+                    startActivity(intt);
                 }
+
                 //This is for maintaining the behavior of the Navigation view
                 NavigationUI.onNavDestinationSelected(menuItem, navController);
                 //This is for closing the drawer after acting on it
