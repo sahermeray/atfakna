@@ -6,11 +6,16 @@
         android:layout_height="match_parent"
         tools:context=".activity.HomeActivity">
 
+    <ListView android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:id="@+id/watched_list_view"
+            />
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/watched_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layoutDirection="inherit"
+            android:visibility="invisible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

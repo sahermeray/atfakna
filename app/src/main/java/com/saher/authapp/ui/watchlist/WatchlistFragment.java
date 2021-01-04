@@ -1,77 +1,105 @@
 package com.saher.authapp.ui.watchlist;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.SuccessContinuation;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.saher.authapp.OnRecyclerViewItemClickListener;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.saher.authapp.R;
-import com.saher.authapp.activity.ViewItemActivity;
-import com.saher.authapp.adapter.ItemAdapter;
+import com.saher.authapp.adapter.ItemCustomAdapter;
 import com.saher.authapp.model.Item;
+import com.saher.authapp.model.UserItem;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 public class WatchlistFragment extends Fragment {
 
-    private WatchlistViewModel watchlistViewModel;
-    ItemAdapter adapter;
+    ItemCustomAdapter adapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference itemRef = db.collection("Itembook");
     View root;
     RecyclerView recyclerView;
+    ArrayList<Item> items = new ArrayList<>();
+    ListView listView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        watchlistViewModel =
-                new ViewModelProvider(this).get(WatchlistViewModel.class);
-
+                             ViewGroup container,
+                             Bundle savedInstanceState
+    ) {
+        adapter = new ItemCustomAdapter(getContext(), items);
         root = inflater.inflate(R.layout.fragment_watchlist, container, false);
         recyclerView = root.findViewById(R.id.watched_list);
+        listView = root.findViewById(R.id.watched_list_view);
         setUpRecyclerView();
 
-//        final TextView textView = root.findViewById(R.id.text_slideshow);
-//        watchlistViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
         return root;
     }
 
     private void setUpRecyclerView() {
         String id = FirebaseAuth.getInstance().getUid();
 //        Query query = itemRef.whereEqualTo("id", id);
-        Query query = itemRef;
-        FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>().setQuery(query, Item.class).build();
-        adapter = new ItemAdapter(R.layout.item_list_item, options, new OnRecyclerViewItemClickListener() {
+        CollectionReference userItemReference = db.collection("useritem");
+        Query userItemQuery = userItemReference;
+        userItemQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onItemClick(String Item_Id) {
-                Intent i = new Intent(getContext(), ViewItemActivity.class);
-                i.putExtra("ITEM_ID", Item_Id);
-                startActivity(i);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                task.onSuccessTask(new SuccessContinuation<QuerySnapshot, UserItem>() {
+                    @NonNull
+                    @Override
+                    public Task<UserItem> then(@Nullable QuerySnapshot queryDocumentSnapshots) throws Exception {
+
+                        for (DocumentSnapshot userItem : queryDocumentSnapshots.getDocuments()) {
+                            String itemId = userItem.get("itemIdl").toString();
+                            Log.e("AHMAD", itemId);
+                            CollectionReference storageReference = FirebaseFirestore.getInstance().collection("Itembook");
+                            Query itemReference = storageReference.whereEqualTo("id", itemId);
+                            itemReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    if (!queryDocumentSnapshots.getDocuments().isEmpty()) {
+                                        Map<String, Object> itemObject = queryDocumentSnapshots.getDocuments().iterator().next().getData();
+                                        Item item = new Item();
+                                        item.setName(itemObject.get("name").toString());
+                                        item.setLocation(itemObject.get("location").toString());
+                                        item.setPrice(itemObject.get("price").toString());
+                                        item.setPhonenumber(itemObject.get("phonenumber").toString());
+                                        item.setDescription(itemObject.get("description").toString());
+                                        item.setId(itemObject.get("id").toString());
+                                        item.setImage(itemObject.get("image").toString());
+
+                                        items.add(item);
+                                        adapter.setItems(items);
+                                        listView.setAdapter(adapter);
+//                                        Log.e("DEBUG", item.getDescription());
+                                    }
+                                }
+                            });
+                        }
+
+                        listView.setAdapter(adapter);
+
+                        return null;
+                    }
+                });
             }
-        }, getContext());
-        adapter.startListening();
-        adapter.notifyDataSetChanged();
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        });
     }
 }
