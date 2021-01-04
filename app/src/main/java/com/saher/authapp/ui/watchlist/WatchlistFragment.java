@@ -75,15 +75,7 @@ public class WatchlistFragment extends Fragment {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     if (!queryDocumentSnapshots.getDocuments().isEmpty()) {
-                                        Map<String, Object> itemObject = queryDocumentSnapshots.getDocuments().iterator().next().getData();
-                                        Item item = new Item();
-                                        item.setName(itemObject.get("name").toString());
-                                        item.setLocation(itemObject.get("location").toString());
-                                        item.setPrice(itemObject.get("price").toString());
-                                        item.setPhonenumber(itemObject.get("phonenumber").toString());
-                                        item.setDescription(itemObject.get("description").toString());
-                                        item.setId(itemObject.get("id").toString());
-                                        item.setImage(itemObject.get("image").toString());
+                                        Item item = queryDocumentSnapshots.getDocuments().iterator().next().toObject(Item.class);
 
                                         items.add(item);
                                         adapter.setItems(items);
