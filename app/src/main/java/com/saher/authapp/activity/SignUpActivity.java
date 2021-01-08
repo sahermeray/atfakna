@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.saher.authapp.R;
 import com.saher.authapp.VerificationActivity;
+import com.saher.authapp.ui.home.HomeFragment;
 
 public class SignUpActivity extends AppCompatActivity {
     EditText emailId,passwd;
@@ -75,8 +76,8 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 emailId.setText("");
                                 passwd.setText("");
-                                Toast.makeText(SignUpActivity.this,"user account created..welcome "+emailID,Toast.LENGTH_LONG).show();
-                                Intent i = new Intent(SignUpActivity.this, VerificationActivity.class);
+                                //Toast.makeText(SignUpActivity.this,"user account created..welcome "+emailID,Toast.LENGTH_LONG).show();
+                                Intent i = new Intent(SignUpActivity.this, HomeActivity.class);
                                 startActivity(i);
                             }
                         }
