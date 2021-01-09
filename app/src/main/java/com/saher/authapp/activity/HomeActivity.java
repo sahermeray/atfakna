@@ -4,33 +4,43 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.saher.authapp.R;
+import com.saher.authapp.ui.home.HomeFragment;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity  {
 
     private AppBarConfiguration mAppBarConfiguration;
     private SearchView.OnQueryTextListener queryTextListener;
     FirebaseAuth firebaseAuth;
+
+
+
+
+
+
 
 
     @Override
@@ -39,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        firebaseAuth=FirebaseAuth.getInstance();
+
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -49,8 +59,17 @@ public class HomeActivity extends AppCompatActivity {
                 .setOpenableLayout(drawer)
                 .build();
 
+        Intent i=getIntent();
+        final int y = i.getIntExtra("message", 0);
+
+
+
+
+
+        firebaseAuth=FirebaseAuth.getInstance();
         FirebaseUser useriuser=firebaseAuth.getCurrentUser();
-        if(useriuser!=null){
+
+        if((useriuser!=null&&useriuser.isEmailVerified())||y==10){
             navigationView.getMenu().findItem(R.id.nav_home).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(true);
@@ -125,4 +144,7 @@ public class HomeActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+
+
 }

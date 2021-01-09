@@ -31,36 +31,21 @@ public class VerificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_verification);
         verificationtoolbar=findViewById(R.id.verification_toolbar);
         setSupportActionBar(verificationtoolbar);
-        firebaseAuth= FirebaseAuth.getInstance();
+        /*firebaseAuth= FirebaseAuth.getInstance();
         signup=findViewById(R.id.TVSignIn);
         SharedPreferences mpref=getSharedPreferences("emailandpassword",0);
         final String userPaswd=mpref.getString("password","");
         final String userEmail=mpref.getString("email","");
 
-       /* authStateListener=new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user=firebaseAuth.getCurrentUser();
-                if(user!=null){
-                    Toast.makeText(ActivityLogin.this,"user logged in",Toast.LENGTH_LONG).show();
-                    Intent i=new Intent(ActivityLogin.this,UserActivity.class);
-                    startActivity(i);
-                }else{
-                    Toast.makeText(ActivityLogin.this,"login to continu",Toast.LENGTH_LONG).show();
-                }
-            }
-        };*/
 
-        /*btnLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {*/
+
         firebaseAuth.signInWithEmailAndPassword(userEmail, userPaswd).addOnCompleteListener(VerificationActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
                     Toast.makeText(VerificationActivity.this, "not successful", Toast.LENGTH_LONG).show();
                 } else {
-                    //Toast.makeText(ActivityLogin.this, "welcome", Toast.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -71,9 +56,7 @@ public class VerificationActivity extends AppCompatActivity {
                 Toast.makeText(VerificationActivity.this,"we sent you a link..please verify your email address and press continue",Toast.LENGTH_LONG).show();
             }
         });
-               /* }
 
-            });*/
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,7 +74,7 @@ public class VerificationActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });*/
 
     }
 }
