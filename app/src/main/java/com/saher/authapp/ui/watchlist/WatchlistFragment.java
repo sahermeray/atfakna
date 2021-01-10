@@ -1,7 +1,9 @@
 package com.saher.authapp.ui.watchlist;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,18 +27,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.saher.authapp.R;
 import com.saher.authapp.adapter.ItemCustomAdapter;
 import com.saher.authapp.model.Item;
-import com.saher.authapp.model.UserItem;
+import com.saher.authapp.model.WatchedItem;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 public class WatchlistFragment extends Fragment {
 
+    private static final int PICK_IMAGE_REQ_CODE = 1;
     ItemCustomAdapter adapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     View root;
-    RecyclerView recyclerView;
     ArrayList<Item> items = new ArrayList<>();
     ListView listView;
 
@@ -46,7 +47,6 @@ public class WatchlistFragment extends Fragment {
     ) {
         adapter = new ItemCustomAdapter(getContext(), items);
         root = inflater.inflate(R.layout.fragment_watchlist, container, false);
-        recyclerView = root.findViewById(R.id.watched_list);
         listView = root.findViewById(R.id.watched_list_view);
         setUpRecyclerView();
 
@@ -54,33 +54,30 @@ public class WatchlistFragment extends Fragment {
     }
 
     private void setUpRecyclerView() {
-        String id = FirebaseAuth.getInstance().getUid();
-//        Query query = itemRef.whereEqualTo("id", id);
-        CollectionReference userItemReference = db.collection("useritem");
-        Query userItemQuery = userItemReference;
+        String userId = FirebaseAuth.getInstance().getUid();
+        CollectionReference userItemReference = db.collection(WatchedItem.COLLECTION_NAME);
+        Query userItemQuery = userItemReference.whereEqualTo("userId", userId);
         userItemQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                task.onSuccessTask(new SuccessContinuation<QuerySnapshot, UserItem>() {
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                task.onSuccessTask(new SuccessContinuation<QuerySnapshot, WatchedItem>() {
                     @NonNull
                     @Override
-                    public Task<UserItem> then(@Nullable QuerySnapshot queryDocumentSnapshots) throws Exception {
+                    public Task<WatchedItem> then(@Nullable QuerySnapshot queryDocumentSnapshots) throws Exception {
 
                         for (DocumentSnapshot userItem : queryDocumentSnapshots.getDocuments()) {
-                            String itemId = userItem.get("itemIdl").toString();
-                            Log.e("AHMAD", itemId);
-                            CollectionReference storageReference = FirebaseFirestore.getInstance().collection("Itembook");
-                            Query itemReference = storageReference.whereEqualTo("id", itemId);
-                            itemReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            final String itemId = userItem.get("itemIdl").toString();
+                            CollectionReference storageReference = FirebaseFirestore.getInstance().collection(Item.COLLECTION_NAME);
+                            Task<DocumentSnapshot> itemReference = storageReference.document(itemId).get();
+                            itemReference.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    if (!queryDocumentSnapshots.getDocuments().isEmpty()) {
-                                        Item item = queryDocumentSnapshots.getDocuments().iterator().next().toObject(Item.class);
-
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if (documentSnapshot.exists()) {
+                                        Item item = documentSnapshot.toObject(Item.class);
+                                        item.setUniqueID(itemId);
                                         items.add(item);
                                         adapter.setItems(items);
                                         listView.setAdapter(adapter);
-//                                        Log.e("DEBUG", item.getDescription());
                                     }
                                 }
                             });

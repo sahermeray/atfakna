@@ -14,14 +14,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,7 +31,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.saher.authapp.R;
 import com.saher.authapp.model.Item;
-import com.saher.authapp.model.UserItem;
+import com.saher.authapp.model.WatchedItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
@@ -47,8 +45,8 @@ public class EditItemActivity extends AppCompatActivity {
     EditText et_location;
     String item_id=null;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
-    final CollectionReference itemRef=db.collection("Itembook");
-    CollectionReference userItemRef=db.collection("useritem");
+    final CollectionReference itemRef=db.collection(Item.COLLECTION_NAME);
+    CollectionReference userItemRef=db.collection(WatchedItem.COLLECTION_NAME);
     int comingfromuseractivity=0;
     MenuItem save;
     MenuItem edit;
@@ -109,7 +107,7 @@ public class EditItemActivity extends AppCompatActivity {
       et_name.setText(it.getName().toString());
       et_location.setText(it.getLocation());
       et_price.setText(it.getPrice());
-      et_phone.setText(it.getPhonenumber());
+      et_phone.setText(it.getPhoneNumber());
       et_description.setText(it.getDescription());
           if(it.getImage()!=null&&!it.getImage().isEmpty()){
              Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
@@ -198,7 +196,7 @@ public class EditItemActivity extends AppCompatActivity {
         loveit.setIcon(R.drawable.ic_loveit);
         final String userid= FirebaseAuth.getInstance().getUid();
         String itemid=item_id;
-        UserItem ui=new UserItem(userid,itemid);
+        WatchedItem ui=new WatchedItem(userid,itemid);
         userItemRef.add(ui);
         Toast.makeText(EditItemActivity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
 
@@ -224,7 +222,7 @@ public class EditItemActivity extends AppCompatActivity {
 
 
 
-        Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(EditItemActivity.this,"your item is uploading...",Toast.LENGTH_LONG).show();
@@ -257,14 +255,14 @@ public class EditItemActivity extends AppCompatActivity {
             final String price=et_price.getText().toString();
             final String phone=et_phone.getText().toString();
             final String description=et_description.getText().toString();
-            final String id= FirebaseAuth.getInstance().getUid();
+            final String userId= FirebaseAuth.getInstance().getUid();
             final String uniqueID=item_id;
-            String imagename=id+"/"+uniqueID+".jpg";
+            String imageName=userId+"/"+uniqueID+".jpg";
             if(name.trim().isEmpty()||location.trim().isEmpty()||price.trim().isEmpty()||phone.trim().isEmpty()||description.trim().isEmpty()||imageUri==null){
                 Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
                 return;
             }
-            final StorageReference reff=ref.child(imagename);
+            final StorageReference reff=ref.child(imageName);
             UploadTask uploadTask=reff.putFile(imageUri);
             Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -284,7 +282,7 @@ public class EditItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if(task.isSuccessful()){
                         Uri downloadUri=task.getResult();
-                        final Item itt=new Item(name,location,price,phone,description,id,uniqueID,downloadUri.toString());
+                        final Item itt=new Item(name,location,price,phone,description,userId,uniqueID,downloadUri.toString());
                         itemRef.whereEqualTo("uniqueID",item_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

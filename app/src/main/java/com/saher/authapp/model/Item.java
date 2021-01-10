@@ -1,33 +1,40 @@
 package com.saher.authapp.model;
 
 public class Item {
-    String name,location,price,phonenumber,description,id,uniqueID,image;
-    public Item(){}
 
-    public Item(String name,String location,String price,String id,String uniqueID,String image){
-        this.name=name;
-        this.location=location;
-        this.price=price;
-        this.id=id;
-        this.uniqueID=uniqueID;
-        this.image=image;
+    public static final String COLLECTION_NAME = "Itembook";
 
+    String name;
+    String location;
+    String price;
+    String phoneNumber;
+    String description;
+    String userId;
+    String uniqueID;
+    String image;
+    String id;
 
-    }
+    public Item() {}
 
-    public Item(String name, String location, String price, String phonenumber, String description,String id,String uniqueID,String image) {
+    public Item(String name, String location, String price, String userId, String uniqueID, String image) {
         this.name = name;
         this.location = location;
         this.price = price;
-        this.phonenumber = phonenumber;
-        this.description = description;
-        this.id=id;
-        this.uniqueID=uniqueID;
-        this.image=image;
-
-
+        this.userId = userId;
+        this.uniqueID = uniqueID;
+        this.image = image;
     }
 
+    public Item(String name, String location, String price, String phoneNumber, String description, String userId, String uniqueID, String image) {
+        this.name = name;
+        this.location = location;
+        this.price = price;
+        this.phoneNumber = phoneNumber;
+        this.description = description;
+        this.userId = userId;
+        this.uniqueID = uniqueID;
+        this.image = image;
+    }
 
     public String getImage() {
         return image;
@@ -37,13 +44,21 @@ public class Item {
         this.image = image;
     }
 
-    public String getUniqueID(){return uniqueID;}
+    public String getUniqueID() {
+        return uniqueID;
+    }
 
-    public void setUniqueID(String uniqueID){this.uniqueID=uniqueID;}
+    public void setUniqueID(String uniqueID) {
+        this.uniqueID = uniqueID;
+    }
 
-    public String getId(){ return id;}
+    public String getUserId() {
+        return userId;
+    }
 
-    public void setId(String id){ this.id=id;}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getName() {
         return name;
@@ -69,12 +84,12 @@ public class Item {
         this.price = price;
     }
 
-    public String getPhonenumber() {
-        return phonenumber;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getDescription() {
@@ -83,5 +98,13 @@ public class Item {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
