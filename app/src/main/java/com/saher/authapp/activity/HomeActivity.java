@@ -4,14 +4,11 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -22,17 +19,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.saher.authapp.R;
-import com.squareup.picasso.Picasso;
-import com.saher.authapp.ui.home.HomeFragment;
 
-public class HomeActivity extends AppCompatActivity  {
+public class HomeActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private SearchView.OnQueryTextListener queryTextListener;
@@ -55,20 +47,20 @@ public class HomeActivity extends AppCompatActivity  {
                 .setOpenableLayout(drawer)
                 .build();
 
-        Intent i=getIntent();
+        Intent i = getIntent();
         final int y = i.getIntExtra("message", 0);
 
-        firebaseAuth=FirebaseAuth.getInstance();
-        FirebaseUser useriuser=firebaseAuth.getCurrentUser();
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser useriuser = firebaseAuth.getCurrentUser();
 
-        if((useriuser!=null&&useriuser.isEmailVerified())||y==10){
+        if ((useriuser != null && useriuser.isEmailVerified()) || y == 10) {
             navigationView.getMenu().findItem(R.id.nav_home).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_slideshow).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_create_account).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
-        }else{
+        } else {
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_home).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
@@ -76,11 +68,6 @@ public class HomeActivity extends AppCompatActivity  {
             navigationView.getMenu().findItem(R.id.nav_create_account).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
         }
-
-
-
-
-
 
 
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -97,11 +84,11 @@ public class HomeActivity extends AppCompatActivity  {
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                }else if(id==R.id.nav_create_account){
-                    Intent i=new Intent(getApplicationContext(),SignUpActivity.class);
+                } else if (id == R.id.nav_create_account) {
+                    Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
                     startActivity(i);
-                }else if(id==R.id.nav_login){
-                    Intent intt=new Intent(getApplicationContext(),LoginActivity.class);
+                } else if (id == R.id.nav_login) {
+                    Intent intt = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intt);
                 }
 

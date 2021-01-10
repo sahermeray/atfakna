@@ -1,5 +1,5 @@
 package com.saher.authapp;
 
 public interface OnRecyclerViewItemClickListener {
-     void onItemClick(String Item_Id);
+    void onItemClick(String Item_Id);
 }

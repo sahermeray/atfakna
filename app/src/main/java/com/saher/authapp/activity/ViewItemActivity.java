@@ -34,8 +34,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
 
-//import com.bumptech.glide.Glide;
-
 public class ViewItemActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQ_CODE = 1;
     Toolbar viewItemToolbar;
@@ -52,7 +50,7 @@ public class ViewItemActivity extends AppCompatActivity {
     ImageView previewImageView;
     Uri imageUri;
     StorageReference storageReference;
-    boolean isItemWatched =false;
+    boolean isItemWatched = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

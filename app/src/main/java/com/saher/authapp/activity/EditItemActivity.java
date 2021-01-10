@@ -34,7 +34,6 @@ import com.saher.authapp.model.Item;
 import com.saher.authapp.model.WatchedItem;
 import com.squareup.picasso.Picasso;
 
-import java.util.UUID;
 import java.util.Objects;
 
 public class EditItemActivity extends AppCompatActivity {
@@ -193,11 +192,11 @@ public class EditItemActivity extends AppCompatActivity {
 
     private void addToWatchlist() {
         loveit.setIcon(R.drawable.ic_loveit);
-        final String userid= FirebaseAuth.getInstance().getUid();
+        final String userid = FirebaseAuth.getInstance().getUid();
         String itemId = this.itemId;
-        WatchedItem ui=new WatchedItem(userid, itemId);
+        WatchedItem ui = new WatchedItem(userid, itemId);
         userItemRef.add(ui);
-        Toast.makeText(EditItemActivity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
+        Toast.makeText(EditItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
 
     }
 
@@ -213,7 +212,7 @@ public class EditItemActivity extends AppCompatActivity {
 
         if (name.trim().isEmpty() || description.trim().isEmpty()) {
             Toast.makeText(this, "article name and description must be filled", Toast.LENGTH_SHORT).show();
-                return;
+            return;
         }
 
         itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

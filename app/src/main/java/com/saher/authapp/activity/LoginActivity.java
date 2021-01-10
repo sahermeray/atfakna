@@ -82,10 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "not successful", Toast.LENGTH_LONG).show();
                             } else {
                                 SharedPreferences sharedPreferences;
-                                sharedPreferences=getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor=sharedPreferences.edit();
-                                editor.putString("password",userPaswd);
-                                editor.putString("email",userEmail);
+                                sharedPreferences = getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("password", userPaswd);
+                                editor.putString("email", userEmail);
                                 editor.commit();
                                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             }
