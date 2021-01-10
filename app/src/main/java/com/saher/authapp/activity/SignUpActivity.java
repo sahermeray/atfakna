@@ -1,9 +1,5 @@
 package com.saher.authapp.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,8 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,11 +19,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.saher.authapp.R;
-import com.saher.authapp.VerificationActivity;
-import com.saher.authapp.ui.home.HomeFragment;
 
 public class SignUpActivity extends AppCompatActivity {
-    EditText emailId,passwd;
+    EditText emailId, passwd;
     Button btnSignUp;
     FirebaseAuth firebaseAuth;
     Toolbar maintoolbar;
@@ -34,20 +31,19 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        maintoolbar=findViewById(R.id.main_activity_toolbar);
+        maintoolbar = findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(maintoolbar);
-        firebaseAuth=FirebaseAuth.getInstance();
-        emailId=findViewById(R.id.ETemail);
-        passwd=findViewById(R.id.ETpassword);
-        btnSignUp=findViewById(R.id.btnSignUp);
+        firebaseAuth = FirebaseAuth.getInstance();
+        emailId = findViewById(R.id.ETemail);
+        passwd = findViewById(R.id.ETpassword);
+        btnSignUp = findViewById(R.id.btnSignUp);
 
-        FirebaseUser useriuser=firebaseAuth.getCurrentUser();
-        if(useriuser!=null){
-            Intent ii=new Intent(SignUpActivity.this,HomeActivity.class);
+        FirebaseUser useriuser = firebaseAuth.getCurrentUser();
+        if (useriuser != null) {
+            Intent ii = new Intent(SignUpActivity.this, HomeActivity.class);
             startActivity(ii);
             finish();
         }
-
 
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -65,10 +61,10 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(SignUpActivity.this, "fields empty", Toast.LENGTH_LONG).show();
                 } else if (!(emailID.isEmpty() && paswd.isEmpty())) {
                     SharedPreferences sharedPreferences;
-                    sharedPreferences=getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    editor.putString("password",paswd);
-                    editor.putString("email",emailID);
+                    sharedPreferences = getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("password", paswd);
+                    editor.putString("email", emailID);
                     editor.commit();
                     firebaseAuth.createUserWithEmailAndPassword(emailID, paswd).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override

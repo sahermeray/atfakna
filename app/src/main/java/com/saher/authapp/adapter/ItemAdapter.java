@@ -42,7 +42,7 @@ public class ItemAdapter extends FirestoreRecyclerAdapter<Item, ItemAdapter.Item
         holder.tv_name.setText(item.getName());
         holder.tv_location.setText(item.getLocation());
         holder.tv_price.setText(item.getPrice());
-        holder.tv_name.setTag(item.getUniqueID());
+        holder.tv_name.setTag(this.getSnapshots().getSnapshot(i).getId());
         if (null != item.getImage()) {
             Picasso.with(context).load(Uri.parse(item.getImage())).fit().centerCrop().into(holder.iv_item);
         }

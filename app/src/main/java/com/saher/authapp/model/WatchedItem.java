@@ -1,12 +1,15 @@
 package com.saher.authapp.model;
 
-public class UserItem {
+public class WatchedItem {
+
+    public static final String COLLECTION_NAME = "useritem";
+
     String userId;
     String itemIdl;
 
-    public  UserItem(){}
+    public WatchedItem(){}
 
-    public UserItem(String userId, String itemIdl) {
+    public WatchedItem(String userId, String itemIdl) {
         this.userId = userId;
         this.itemIdl = itemIdl;
     }

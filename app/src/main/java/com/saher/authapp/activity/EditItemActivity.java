@@ -31,7 +31,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.saher.authapp.R;
 import com.saher.authapp.model.Item;
-import com.saher.authapp.model.UserItem;
+import com.saher.authapp.model.WatchedItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -43,8 +43,8 @@ public class EditItemActivity extends AppCompatActivity {
     EditText et_location;
     String itemId = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final CollectionReference itemRef = db.collection("Itembook");
-    CollectionReference userItemRef = db.collection("useritem");
+    final CollectionReference itemRef = db.collection(Item.COLLECTION_NAME);
+    CollectionReference userItemRef = db.collection(WatchedItem.COLLECTION_NAME);
     int isFromUserActivity = 0;
     MenuItem save;
     MenuItem edit;
@@ -104,7 +104,7 @@ public class EditItemActivity extends AppCompatActivity {
                 et_name.setText(it.getName().toString());
                 et_location.setText(it.getLocation());
                 et_price.setText(it.getPrice());
-                et_phone.setText(it.getPhonenumber());
+                et_phone.setText(it.getPhoneNumber());
                 et_description.setText(it.getDescription());
                 if (it.getImage() != null && !it.getImage().isEmpty()) {
                     Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
@@ -192,10 +192,10 @@ public class EditItemActivity extends AppCompatActivity {
 
     private void addToWatchlist() {
         loveit.setIcon(R.drawable.ic_loveit);
-        final String userId = FirebaseAuth.getInstance().getUid();
+        final String userid = FirebaseAuth.getInstance().getUid();
         String itemId = this.itemId;
-        UserItem userItem = new UserItem(userId, itemId);
-        userItemRef.add(userItem);
+        WatchedItem ui = new WatchedItem(userid, itemId);
+        userItemRef.add(ui);
         Toast.makeText(EditItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
 
     }
@@ -212,7 +212,7 @@ public class EditItemActivity extends AppCompatActivity {
 
         if (name.trim().isEmpty() || description.trim().isEmpty()) {
             Toast.makeText(this, "article name and description must be filled", Toast.LENGTH_SHORT).show();
-                return;
+            return;
         }
 
         itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

@@ -29,31 +29,28 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.saher.authapp.R;
 import com.saher.authapp.model.Item;
-import com.saher.authapp.model.UserItem;
+import com.saher.authapp.model.WatchedItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
 
-//import com.bumptech.glide.Glide;
-
 public class ViewItemActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQ_CODE = 1;
     Toolbar viewItemToolbar;
-    TextView et_name, et_location, et_price, et_phone, et_description;
-    String item_id = null;
+    TextView itemTitleView, itemLocationView, itemPriceView, itemPhoneView, itemDescriptionView;
+    String itemId = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final CollectionReference itemRef = db.collection("Itembook");
-    CollectionReference userItemRef = db.collection("useritem");
+    final CollectionReference itemsCollectionReference = db.collection(Item.COLLECTION_NAME);
+    CollectionReference watchedItemCollectionReference = db.collection(WatchedItem.COLLECTION_NAME);
     int comingfromuseractivity = 0;
-    MenuItem save;
-    MenuItem edit;
-    MenuItem delete;
-    MenuItem loveit;
-    ImageView previewImage;
+    MenuItem saveMenuItem;
+    MenuItem editMenuItem;
+    MenuItem deleteMenuItem;
+    MenuItem watchMenuItem;
+    ImageView previewImageView;
     Uri imageUri;
-    FirebaseStorage firebasestorage;
-    StorageReference ref;
-
+    StorageReference storageReference;
+    boolean isItemWatched = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,43 +59,53 @@ public class ViewItemActivity extends AppCompatActivity {
         viewItemToolbar = findViewById(R.id.item_activity_toolbar);
         setSupportActionBar(viewItemToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        et_name = findViewById(R.id.item_title);
-        et_location = findViewById(R.id.activity_view_item_location);
-        et_price = findViewById(R.id.item_price);
-        et_phone = findViewById(R.id.activity_view_item_phone);
-        et_description = findViewById(R.id.activity_view_item_description);
-        previewImage = findViewById(R.id.view_item_iv);
-        firebasestorage = FirebaseStorage.getInstance();
-        ref = firebasestorage.getReference();
-
+        itemTitleView = findViewById(R.id.item_title);
+        itemLocationView = findViewById(R.id.activity_view_item_location);
+        itemPriceView = findViewById(R.id.item_price);
+        itemPhoneView = findViewById(R.id.activity_view_item_phone);
+        itemDescriptionView = findViewById(R.id.activity_view_item_description);
+        previewImageView = findViewById(R.id.view_item_iv);
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         Intent intent = getIntent();
         comingfromuseractivity = intent.getIntExtra("COMING_FROM_USER_ACTIVITY", 0);
-        item_id = intent.getStringExtra("ITEM_ID");
+        itemId = intent.getStringExtra("ITEM_ID");
         if (comingfromuseractivity == 0) {
-            if (item_id != null) {
-                fillItemToFields(item_id);
+            if (itemId != null) {
+                fillItemToFields(itemId);
             }
         } else {
-            fillItemToFields(item_id);
+            fillItemToFields(itemId);
         }
     }
 
     private void fillItemToFields(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemsCollectionReference.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Item item = documentSnapshot.toObject(Item.class);
+                    itemTitleView.setText(item.getName().toString());
+                    itemLocationView.setText(item.getLocation());
+                    itemPriceView.setText(item.getPrice());
+                    itemPhoneView.setText(item.getPhoneNumber());
+                    itemDescriptionView.setText(item.getDescription());
+                    if (item.getImage() != null && !item.getImage().isEmpty()) {
+                        Picasso.with(ViewItemActivity.this).load(Uri.parse(item.getImage())).into(previewImageView);
+                    } else {
+                        previewImageView.setImageResource(R.drawable.ic_shopping);
+                    }
+                }
+            }
+        });
+        watchedItemCollectionReference.whereEqualTo("itemIdl", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                Item it = queryDocumentSnapshots.getDocuments().get(0).toObject(Item.class);
-                et_name.setText(it.getName().toString());
-                et_location.setText(it.getLocation());
-                et_price.setText(it.getPrice());
-                et_phone.setText(it.getPhonenumber());
-                et_description.setText(it.getDescription());
-                if (it.getImage() != null && !it.getImage().isEmpty()) {
-                    Picasso.with(ViewItemActivity.this).load(Uri.parse(it.getImage())).into(previewImage);
-                } else {
-                    previewImage.setImageResource(R.drawable.ic_shopping);
+                if (queryDocumentSnapshots.isEmpty()) {
+                    return;
                 }
+                watchMenuItem.setIcon(R.drawable.ic_loveit);
+                isItemWatched = true;
             }
         });
     }
@@ -106,19 +113,18 @@ public class ViewItemActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_item_menu, menu);
-        save = menu.findItem(R.id.save);
-        edit = menu.findItem(R.id.edit);
-        delete = menu.findItem(R.id.delete);
-        loveit = menu.findItem(R.id.loveit);
-        save.setVisible(false);
-        edit.setVisible(false);
-        delete.setVisible(false);
-        loveit.setVisible(true);
-        loveit.setIcon(R.drawable.ic_watchlist);
+        saveMenuItem = menu.findItem(R.id.save);
+        editMenuItem = menu.findItem(R.id.edit);
+        deleteMenuItem = menu.findItem(R.id.delete);
+        watchMenuItem = menu.findItem(R.id.loveit);
+        saveMenuItem.setVisible(false);
+        editMenuItem.setVisible(false);
+        deleteMenuItem.setVisible(false);
+        watchMenuItem.setVisible(true);
+        watchMenuItem.setIcon(R.drawable.ic_watchlist);
+
         return true;
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -127,15 +133,19 @@ public class ViewItemActivity extends AppCompatActivity {
                 saveItem();
                 return true;
             case R.id.edit:
-                save.setVisible(true);
-                delete.setVisible(false);
-                edit.setVisible(false);
+                saveMenuItem.setVisible(true);
+                deleteMenuItem.setVisible(false);
+                editMenuItem.setVisible(false);
                 return true;
             case R.id.delete:
-                deleteItem(item_id);
+                deleteItem(itemId);
                 return true;
             case R.id.loveit:
-                addtowatchlist();
+                if (isItemWatched) {
+                    unwatchItem();
+                } else {
+                    addToWatchlist();
+                }
                 return true;
             case android.R.id.home:
                 // app icon in action bar clicked; go home
@@ -149,7 +159,7 @@ public class ViewItemActivity extends AppCompatActivity {
     }
 
     private void deleteItem(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
@@ -159,32 +169,48 @@ public class ViewItemActivity extends AppCompatActivity {
         finish();
     }
 
-    private void addtowatchlist() {
-        loveit.setIcon(R.drawable.ic_loveit);
-        final String userid = FirebaseAuth.getInstance().getUid();
-        String itemid = item_id;
-        UserItem ui = new UserItem(userid, itemid);
-        userItemRef.add(ui);
+    private void addToWatchlist() {
+        watchMenuItem.setIcon(R.drawable.ic_loveit);
+        final String userId = FirebaseAuth.getInstance().getUid();
+        String item_id = this.itemId;
+        WatchedItem watchedItem = new WatchedItem(userId, item_id);
+        watchedItemCollectionReference.add(watchedItem);
         Toast.makeText(ViewItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
-
     }
 
+    private void unwatchItem() {
+        watchMenuItem.setIcon(R.drawable.ic_watchlist);
+        final String userId = FirebaseAuth.getInstance().getUid();
+        watchedItemCollectionReference
+                .whereEqualTo("itemIdl", this.itemId)
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.iterator().hasNext()) {
+                            queryDocumentSnapshots.iterator().next().getReference().delete();
+                        }
+                    }
+                });
+        Toast.makeText(ViewItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
+    }
 
     private void saveItem() {
-        if (item_id == null) {
-            final String name = et_name.getText().toString();
-            final String location = et_location.getText().toString();
-            final String price = et_price.getText().toString();
-            final String phone = et_phone.getText().toString();
-            final String description = et_description.getText().toString();
-            final String id = FirebaseAuth.getInstance().getUid();
+        if (itemId == null) {
+            final String name = itemTitleView.getText().toString();
+            final String location = itemLocationView.getText().toString();
+            final String price = itemPriceView.getText().toString();
+            final String phone = itemPhoneView.getText().toString();
+            final String description = itemDescriptionView.getText().toString();
+            final String userId = FirebaseAuth.getInstance().getUid();
             final String uniqueID = UUID.randomUUID().toString();
-            String imagename = id + "/" + uniqueID + ".jpg";
+            String imageName = userId + "/" + uniqueID + ".jpg";
             if (name.trim().isEmpty() || location.trim().isEmpty() || price.trim().isEmpty() || phone.trim().isEmpty() || description.trim().isEmpty() || imageUri == null) {
                 Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
                 return;
             }
-            final StorageReference reff = ref.child(imagename);
+            final StorageReference reff = storageReference.child(imageName);
             UploadTask uploadTask = reff.putFile(imageUri);
 
 
@@ -206,7 +232,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        itemRef.add(new Item(name, location, price, phone, description, id, uniqueID, downloadUri.toString()));
+                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, uniqueID, downloadUri.toString()));
                         Toast.makeText(ViewItemActivity.this, "item added", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
@@ -215,19 +241,19 @@ public class ViewItemActivity extends AppCompatActivity {
                 }
             });
         } else {
-            final String name = et_name.getText().toString();
-            final String location = et_location.getText().toString();
-            final String price = et_price.getText().toString();
-            final String phone = et_phone.getText().toString();
-            final String description = et_description.getText().toString();
+            final String name = itemTitleView.getText().toString();
+            final String location = itemLocationView.getText().toString();
+            final String price = itemPriceView.getText().toString();
+            final String phone = itemPhoneView.getText().toString();
+            final String description = itemDescriptionView.getText().toString();
             final String id = FirebaseAuth.getInstance().getUid();
-            final String uniqueID = item_id;
+            final String uniqueID = itemId;
             String imagename = id + "/" + uniqueID + ".jpg";
             if (name.trim().isEmpty() || location.trim().isEmpty() || price.trim().isEmpty() || phone.trim().isEmpty() || description.trim().isEmpty() || imageUri == null) {
                 Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
                 return;
             }
-            final StorageReference reff = ref.child(imagename);
+            final StorageReference reff = storageReference.child(imagename);
             UploadTask uploadTask = reff.putFile(imageUri);
             Task<Uri> urlTask = uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -248,7 +274,7 @@ public class ViewItemActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         final Item itt = new Item(name, location, price, phone, description, id, uniqueID, downloadUri.toString());
-                        itemRef.whereEqualTo("uniqueID", item_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
@@ -270,7 +296,7 @@ public class ViewItemActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQ_CODE && resultCode == RESULT_OK) {
             if (data != null) {
                 imageUri = data.getData();
-                Picasso.with(this).load(imageUri).into(previewImage);
+                Picasso.with(this).load(imageUri).into(previewImageView);
             }
         }
     }
