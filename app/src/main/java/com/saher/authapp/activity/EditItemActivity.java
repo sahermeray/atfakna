@@ -35,19 +35,18 @@ import com.saher.authapp.model.WatchedItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
-
-//import com.bumptech.glide.Glide;
+import java.util.Objects;
 
 public class EditItemActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQ_CODE = 1;
     Toolbar viewItemToolbar;
     EditText et_name, et_price, et_phone, et_description;
     EditText et_location;
-    String item_id=null;
-    FirebaseFirestore db=FirebaseFirestore.getInstance();
-    final CollectionReference itemRef=db.collection(Item.COLLECTION_NAME);
-    CollectionReference userItemRef=db.collection(WatchedItem.COLLECTION_NAME);
-    int comingfromuseractivity=0;
+    String itemId = null;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final CollectionReference itemRef = db.collection(Item.COLLECTION_NAME);
+    CollectionReference userItemRef = db.collection(WatchedItem.COLLECTION_NAME);
+    int isFromUserActivity = 0;
     MenuItem save;
     MenuItem edit;
     MenuItem delete;
@@ -55,7 +54,7 @@ public class EditItemActivity extends AppCompatActivity {
     ImageView iv;
     Uri imageUri;
     FirebaseStorage firebasestorage;
-    StorageReference ref;
+    StorageReference storageRef;
 
 
     @Override
@@ -69,52 +68,52 @@ public class EditItemActivity extends AppCompatActivity {
         et_price = findViewById(R.id.activity_view_item_price);
         et_phone = findViewById(R.id.activity_view_item_phone);
         et_description = findViewById(R.id.activity_view_item_description);
-        iv=findViewById(R.id.view_item_iv);
-        firebasestorage=FirebaseStorage.getInstance();
-        ref=firebasestorage.getReference();
+        iv = findViewById(R.id.view_item_iv);
+        firebasestorage = FirebaseStorage.getInstance();
+        storageRef = firebasestorage.getReference();
 
 
-        Intent intent=getIntent();
-        comingfromuseractivity=intent.getIntExtra("COMING_FROM_USER_ACTIVITY",0);
-        item_id=intent.getStringExtra("ITEM_ID");
-       if(comingfromuseractivity==0){
-        if(item_id==null){
-            enableFields();
-            clearFields();
-        }
-        else{
-            fillItemToFields(item_id);
+        Intent intent = getIntent();
+        isFromUserActivity = intent.getIntExtra("COMING_FROM_USER_ACTIVITY", 0);
+        itemId = intent.getStringExtra("ITEM_ID");
+        if (isFromUserActivity == 0) {
+            if (itemId == null) {
+                enableFields();
+                clearFields();
+            } else {
+                fillItemToFields(itemId);
+                disableFields();
+            }
+        } else {
+            fillItemToFields(itemId);
             disableFields();
-        }}
-       else {
-           fillItemToFields(item_id);
-           disableFields();
-       }
+        }
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent in=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(in,PICK_IMAGE_REQ_CODE);
+                Intent in = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(in, PICK_IMAGE_REQ_CODE);
             }
         });
     }
 
-    private void fillItemToFields(String itemId){
-      itemRef.whereEqualTo("uniqueID",itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-      @Override
-      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-      Item it=queryDocumentSnapshots.getDocuments().get(0).toObject(Item.class);
-      et_name.setText(it.getName().toString());
-      et_location.setText(it.getLocation());
-      et_price.setText(it.getPrice());
-      et_phone.setText(it.getPhoneNumber());
-      et_description.setText(it.getDescription());
-          if(it.getImage()!=null&&!it.getImage().isEmpty()){
-             Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
-          }
-          else{iv.setImageResource(R.drawable.ic_shopping);}
-      }
-    });
+    private void fillItemToFields(String itemId) {
+        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                Item it = queryDocumentSnapshots.getDocuments().get(0).toObject(Item.class);
+                et_name.setText(it.getName().toString());
+                et_location.setText(it.getLocation());
+                et_price.setText(it.getPrice());
+                et_phone.setText(it.getPhoneNumber());
+                et_description.setText(it.getDescription());
+                if (it.getImage() != null && !it.getImage().isEmpty()) {
+                    Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
+                } else {
+                    iv.setImageResource(R.drawable.ic_shopping);
+                }
+            }
+        });
     }
 
     private void disableFields() {
@@ -147,21 +146,21 @@ public class EditItemActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_item_menu, menu);
-         save = menu.findItem(R.id.save);
-         edit = menu.findItem(R.id.edit);
-         delete = menu.findItem(R.id.delete);
-         loveit=menu.findItem(R.id.loveit);
+        save = menu.findItem(R.id.save);
+        edit = menu.findItem(R.id.edit);
+        delete = menu.findItem(R.id.delete);
+        loveit = menu.findItem(R.id.loveit);
         save.setVisible(false);
         edit.setVisible(true);
         delete.setVisible(true);
         loveit.setVisible(false);
-        return true;
 
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.save:
                 saveItem();
                 return true;
@@ -172,139 +171,127 @@ public class EditItemActivity extends AppCompatActivity {
                 enableFields();
                 return true;
             case R.id.delete:
-                deleteItem(item_id);
+                deleteItem(itemId);
                 return true;
             case R.id.loveit:
-                addtowatchlist();
+                addToWatchlist();
                 return true;
         }
         return true;
     }
 
-    private void deleteItem(String itemId){
-        itemRef.whereEqualTo("uniqueID",itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    private void deleteItem(String itemId) {
+        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-               DocumentSnapshot dd=queryDocumentSnapshots.getDocuments().get(0);
-               dd.getReference().delete();
+                DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
+                dd.getReference().delete();
             }
         });
-      finish();
+        finish();
     }
 
-    private void addtowatchlist(){
+    private void addToWatchlist() {
         loveit.setIcon(R.drawable.ic_loveit);
         final String userid= FirebaseAuth.getInstance().getUid();
-        String itemid=item_id;
-        WatchedItem ui=new WatchedItem(userid,itemid);
+        String itemId = this.itemId;
+        WatchedItem ui=new WatchedItem(userid, itemId);
         userItemRef.add(ui);
         Toast.makeText(EditItemActivity.this,"item has been added to your watchlist",Toast.LENGTH_LONG).show();
 
     }
-    
 
-    private void saveItem(){
-        if(item_id==null){
-        final String name=et_name.getText().toString();
-        final String location=et_location.getText().toString();
-        final String price=et_price.getText().toString();
-        final String phone=et_phone.getText().toString();
-        final String description=et_description.getText().toString();
-        final String id= FirebaseAuth.getInstance().getUid();
-        final String uniqueID= UUID.randomUUID().toString();
-        String imagename=id+"/"+uniqueID+".jpg";
-        if(name.trim().isEmpty()||location.trim().isEmpty()||price.trim().isEmpty()||phone.trim().isEmpty()||description.trim().isEmpty()||imageUri==null){
-            Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
-            return;
+
+    private void saveItem() {
+        final String name = et_name.getText().toString();
+        final String location = et_location.getText().toString();
+        final String price = et_price.getText().toString();
+        final String phone = et_phone.getText().toString();
+        final String description = et_description.getText().toString();
+        final String id = FirebaseAuth.getInstance().getUid();
+        final String uniqueID = itemId;
+
+        if (name.trim().isEmpty() || description.trim().isEmpty()) {
+            Toast.makeText(this, "article name and description must be filled", Toast.LENGTH_SHORT).show();
+                return;
         }
-        final StorageReference reff=ref.child(imagename);
-        UploadTask uploadTask=reff.putFile(imageUri);
 
-
-
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(EditItemActivity.this,"your item is uploading...",Toast.LENGTH_LONG).show();
-            }
-        }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if(!task.isSuccessful()){
-                    throw task.getException();
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                final DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                Item existingItem = documentSnapshot.toObject(Item.class);
+
+                if (null == existingItem) {
+                    return;
                 }
-                return reff.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if(task.isSuccessful()){
-                    Uri downloadUri=task.getResult();
-                    itemRef.add(new Item(name,location,price,phone,description,id,uniqueID,downloadUri.toString()));
-                    Toast.makeText(EditItemActivity.this,"item added",Toast.LENGTH_LONG).show();
-                    finish();
-                }else{
-                    Toast.makeText(EditItemActivity.this,"error",Toast.LENGTH_LONG).show();
+
+                if (null != imageUri) {
+                    String imagePath = id + "/" + uniqueID + ".jpg";
+                    final StorageReference storageReference = storageRef.child(imagePath);
+                    UploadTask uploadTask = storageReference.putFile(imageUri);
+                    uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(EditItemActivity.this, "your item is being edited...", Toast.LENGTH_LONG).show();
+                        }
+                    }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                            return storageReference.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                Uri downloadUri = task.getResult();
+                                final Item item = new Item(
+                                        name,
+                                        location,
+                                        price,
+                                        phone,
+                                        description,
+                                        id,
+                                        uniqueID,
+                                        downloadUri.toString()
+                                );
+                                updateItem(documentSnapshot, item);
+
+                            } else {
+                                Toast.makeText(EditItemActivity.this, "error", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                } else {
+                    final Item item = new Item(
+                            name,
+                            location,
+                            price,
+                            phone,
+                            description,
+                            id,
+                            uniqueID,
+                            existingItem.getImage());
+                    updateItem(documentSnapshot, item);
                 }
+                Toast.makeText(EditItemActivity.this, "item edited", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
-        }
-        else{
-            final String name=et_name.getText().toString();
-            final String location=et_location.getText().toString();
-            final String price=et_price.getText().toString();
-            final String phone=et_phone.getText().toString();
-            final String description=et_description.getText().toString();
-            final String userId= FirebaseAuth.getInstance().getUid();
-            final String uniqueID=item_id;
-            String imageName=userId+"/"+uniqueID+".jpg";
-            if(name.trim().isEmpty()||location.trim().isEmpty()||price.trim().isEmpty()||phone.trim().isEmpty()||description.trim().isEmpty()||imageUri==null){
-                Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            final StorageReference reff=ref.child(imageName);
-            UploadTask uploadTask=reff.putFile(imageUri);
-            Task<Uri>urlTask=uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(EditItemActivity.this,"your item is being edited...",Toast.LENGTH_LONG).show();
-                }
-            }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return reff.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        Uri downloadUri=task.getResult();
-                        final Item itt=new Item(name,location,price,phone,description,userId,uniqueID,downloadUri.toString());
-                        itemRef.whereEqualTo("uniqueID",item_id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                DocumentSnapshot dd=queryDocumentSnapshots.getDocuments().get(0);
-                                dd.getReference().set(itt);
-                                Toast.makeText(EditItemActivity.this,"item edited",Toast.LENGTH_LONG).show();
-                                finish();
-                            }
-                        });
-                    }else{
-                        Toast.makeText(EditItemActivity.this,"error",Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
+    }
+
+    private void updateItem(DocumentSnapshot reference, Item item) {
+        reference.getReference().set(item);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==PICK_IMAGE_REQ_CODE&&resultCode==RESULT_OK){
-            if(data!=null){
-                imageUri=data.getData();
+        if (requestCode == PICK_IMAGE_REQ_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                imageUri = data.getData();
                 Picasso.with(this).load(imageUri).into(iv);
             }
         }
