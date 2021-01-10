@@ -42,7 +42,7 @@ public class ViewItemActivity extends AppCompatActivity {
     TextView itemTitleView, itemLocationView, itemPriceView, itemPhoneView, itemDescriptionView;
     String itemId = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final CollectionReference itemRef = db.collection(Item.COLLECTION_NAME);
+    final CollectionReference itemsCollectionReference = db.collection(Item.COLLECTION_NAME);
     CollectionReference watchedItemCollectionReference = db.collection(WatchedItem.COLLECTION_NAME);
     int comingfromuseractivity = 0;
     MenuItem saveMenuItem;
@@ -52,6 +52,7 @@ public class ViewItemActivity extends AppCompatActivity {
     ImageView previewImageView;
     Uri imageUri;
     StorageReference storageReference;
+    boolean isItemWatched =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class ViewItemActivity extends AppCompatActivity {
     }
 
     private void fillItemToFields(String itemId) {
-        itemRef.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        itemsCollectionReference.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
@@ -97,7 +98,16 @@ public class ViewItemActivity extends AppCompatActivity {
                         previewImageView.setImageResource(R.drawable.ic_shopping);
                     }
                 }
-
+            }
+        });
+        watchedItemCollectionReference.whereEqualTo("itemIdl", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.isEmpty()) {
+                    return;
+                }
+                watchMenuItem.setIcon(R.drawable.ic_loveit);
+                isItemWatched = true;
             }
         });
     }
@@ -133,7 +143,11 @@ public class ViewItemActivity extends AppCompatActivity {
                 deleteItem(itemId);
                 return true;
             case R.id.loveit:
-                addToWatchlist();
+                if (isItemWatched) {
+                    unwatchItem();
+                } else {
+                    addToWatchlist();
+                }
                 return true;
             case android.R.id.home:
                 // app icon in action bar clicked; go home
@@ -147,7 +161,7 @@ public class ViewItemActivity extends AppCompatActivity {
     }
 
     private void deleteItem(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
@@ -163,6 +177,24 @@ public class ViewItemActivity extends AppCompatActivity {
         String item_id = this.itemId;
         WatchedItem watchedItem = new WatchedItem(userId, item_id);
         watchedItemCollectionReference.add(watchedItem);
+        Toast.makeText(ViewItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
+    }
+
+    private void unwatchItem() {
+        watchMenuItem.setIcon(R.drawable.ic_watchlist);
+        final String userId = FirebaseAuth.getInstance().getUid();
+        watchedItemCollectionReference
+                .whereEqualTo("itemIdl", this.itemId)
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.iterator().hasNext()) {
+                            queryDocumentSnapshots.iterator().next().getReference().delete();
+                        }
+                    }
+                });
         Toast.makeText(ViewItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
     }
 
@@ -202,7 +234,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        itemRef.add(new Item(name, location, price, phone, description, userId, uniqueID, downloadUri.toString()));
+                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, uniqueID, downloadUri.toString()));
                         Toast.makeText(ViewItemActivity.this, "item added", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
@@ -244,7 +276,7 @@ public class ViewItemActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         final Item itt = new Item(name, location, price, phone, description, id, uniqueID, downloadUri.toString());
-                        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
