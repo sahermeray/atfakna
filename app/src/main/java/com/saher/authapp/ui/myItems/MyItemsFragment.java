@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.saher.authapp.OnRecyclerViewItemClickListener;
 import com.saher.authapp.R;
+import com.saher.authapp.activity.AddItemActivity;
 import com.saher.authapp.activity.EditItemActivity;
 import com.saher.authapp.activity.ViewItemActivity;
 import com.saher.authapp.adapter.ItemAdapter;
@@ -43,7 +44,7 @@ public class MyItemsFragment extends Fragment {
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext(), ViewItemActivity.class);
+                Intent i = new Intent(getContext(), AddItemActivity.class);
                 startActivity(i);
             }
         });

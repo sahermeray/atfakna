@@ -104,7 +104,7 @@ public class EditItemActivity extends AppCompatActivity {
                 et_name.setText(it.getName().toString());
                 et_location.setText(it.getLocation());
                 et_price.setText(it.getPrice());
-                et_phone.setText(it.getPhoneNumber());
+                et_phone.setText(it.getPhonenumber());
                 et_description.setText(it.getDescription());
                 if (it.getImage() != null && !it.getImage().isEmpty()) {
                     Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);

@@ -7,7 +7,7 @@ public class Item {
     String name;
     String location;
     String price;
-    String phoneNumber;
+    String phonenumber;
     String description;
     String userId;
     String uniqueID;
@@ -25,11 +25,11 @@ public class Item {
         this.image = image;
     }
 
-    public Item(String name, String location, String price, String phoneNumber, String description, String userId, String uniqueID, String image) {
+    public Item(String name, String location, String price, String phonenumber, String description, String userId, String uniqueID, String image) {
         this.name = name;
         this.location = location;
         this.price = price;
-        this.phoneNumber = phoneNumber;
+        this.phonenumber = phonenumber;
         this.description = description;
         this.userId = userId;
         this.uniqueID = uniqueID;
@@ -84,12 +84,12 @@ public class Item {
         this.price = price;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhonenumber() {
+        return phonenumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
     }
 
     public String getDescription() {

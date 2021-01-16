@@ -88,7 +88,7 @@ public class ViewItemActivity extends AppCompatActivity {
                     itemTitleView.setText(item.getName().toString());
                     itemLocationView.setText(item.getLocation());
                     itemPriceView.setText(item.getPrice());
-                    itemPhoneView.setText(item.getPhoneNumber());
+                    itemPhoneView.setText(item.getPhonenumber());
                     itemDescriptionView.setText(item.getDescription());
                     if (item.getImage() != null && !item.getImage().isEmpty()) {
                         Picasso.with(ViewItemActivity.this).load(Uri.parse(item.getImage())).into(previewImageView);
