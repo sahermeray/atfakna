@@ -45,6 +45,19 @@
         android:id="@+id/ETpassword"
         android:inputType="numberPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.hbb20.CountryCodePicker
+        android:id="@+id/create_account_country"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/darker_gray"
+        app:ccp_autoDetectCountry="true"
+        app:ccp_showFlag="true"
+        app:ccp_showFullName="true"
+        app:ccp_showNameCode="false"
+        app:ccp_showPhoneCode="false"
+        android:gravity="center"
+        android:layout_margin="18dp"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

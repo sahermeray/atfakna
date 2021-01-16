@@ -18,13 +18,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.hbb20.CountryCodePicker;
 import com.saher.authapp.R;
+import com.saher.authapp.model.UserSetting;
 
 public class SignUpActivity extends AppCompatActivity {
     EditText emailId, passwd;
     Button btnSignUp;
     FirebaseAuth firebaseAuth;
     Toolbar maintoolbar;
+    CountryCodePicker ccp;
+    String country;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final CollectionReference userSettingsCollectionReference = db.collection("UserSetting");
 
 
     @Override
@@ -37,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
         emailId = findViewById(R.id.ETemail);
         passwd = findViewById(R.id.ETpassword);
         btnSignUp = findViewById(R.id.btnSignUp);
+        ccp=findViewById(R.id.create_account_country);
 
         FirebaseUser useriuser = firebaseAuth.getCurrentUser();
         if (useriuser != null) {
@@ -44,6 +53,13 @@ public class SignUpActivity extends AppCompatActivity {
             startActivity(ii);
             finish();
         }
+
+        ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+            @Override
+            public void onCountrySelected() {
+                country=ccp.getSelectedCountryName();
+            }
+        });
 
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +75,9 @@ public class SignUpActivity extends AppCompatActivity {
                     passwd.requestFocus();
                 } else if (emailID.isEmpty() && paswd.isEmpty()) {
                     Toast.makeText(SignUpActivity.this, "fields empty", Toast.LENGTH_LONG).show();
-                } else if (!(emailID.isEmpty() && paswd.isEmpty())) {
+                }else if(country.trim().isEmpty()){
+                    Toast.makeText(SignUpActivity.this,"select country",Toast.LENGTH_LONG).show();
+                } else if (!(emailID.isEmpty() && paswd.isEmpty()&&country.trim().isEmpty())) {
                     SharedPreferences sharedPreferences;
                     sharedPreferences = getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -72,6 +90,9 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 emailId.setText("");
                                 passwd.setText("");
+                                FirebaseUser useeer=FirebaseAuth.getInstance().getCurrentUser();
+                                String useeerid=useeer.getUid();
+                                userSettingsCollectionReference.add(new UserSetting(useeerid,country,"https://firebasestorage.googleapis.com/v0/b/authapp-33810.appspot.com/o/IMG-20201125-WA0006.jpg?alt=media&token=d714b649-b97e-4ccb-a1d7-1b31a0d104f8","English"));
                                 //Toast.makeText(SignUpActivity.this,"user account created..welcome "+emailID,Toast.LENGTH_LONG).show();
                                 Intent i = new Intent(SignUpActivity.this, HomeActivity.class);
                                 startActivity(i);

@@ -52,7 +52,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         profileToolbar = findViewById(R.id.profile_activity_toolbar);
         setSupportActionBar(profileToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
         FirebaseUser user=firebaseAuth.getCurrentUser();
         userId=user.getUid();
         profileEmailTextview.setText(user.getEmail());
+        country=ccp.getDefaultCountryName();
 
         ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
