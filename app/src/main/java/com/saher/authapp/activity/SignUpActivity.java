@@ -92,7 +92,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 passwd.setText("");
                                 FirebaseUser useeer=FirebaseAuth.getInstance().getCurrentUser();
                                 String useeerid=useeer.getUid();
-                                userSettingsCollectionReference.add(new UserSetting(useeerid,country,"https://firebasestorage.googleapis.com/v0/b/authapp-33810.appspot.com/o/IMG-20201125-WA0006.jpg?alt=media&token=d714b649-b97e-4ccb-a1d7-1b31a0d104f8","English"));
+                                userSettingsCollectionReference.add(new UserSetting(useeerid,country,"","English"));
                                 //Toast.makeText(SignUpActivity.this,"user account created..welcome "+emailID,Toast.LENGTH_LONG).show();
                                 Intent i = new Intent(SignUpActivity.this, HomeActivity.class);
                                 startActivity(i);

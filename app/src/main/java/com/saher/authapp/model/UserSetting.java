@@ -6,10 +6,10 @@ public class UserSetting {
     public UserSetting(){}
 
     public UserSetting(String userId, String userCountry, String userImage, String userLanguage) {
-        UserId = userId;
-        UserCountry = userCountry;
-        UserImage = userImage;
-        UserLanguage = userLanguage;
+        this.UserId = userId;
+        this.UserCountry = userCountry;
+        this.UserImage = userImage;
+        this.UserLanguage = userLanguage;
     }
 
     public String getUserId() {
@@ -17,7 +17,7 @@ public class UserSetting {
     }
 
     public void setUserId(String userId) {
-        UserId = userId;
+        this.UserId = userId;
     }
 
     public String getUserCountry() {
@@ -25,7 +25,7 @@ public class UserSetting {
     }
 
     public void setUserCountry(String userCountry) {
-        UserCountry = userCountry;
+        this.UserCountry = userCountry;
     }
 
     public String getUserImage() {
@@ -33,7 +33,7 @@ public class UserSetting {
     }
 
     public void setUserImage(String userImage) {
-        UserImage = userImage;
+        this.UserImage = userImage;
     }
 
     public String getUserLanguage() {
@@ -41,7 +41,7 @@ public class UserSetting {
     }
 
     public void setUserLanguage(String userLanguage) {
-        UserLanguage = userLanguage;
+        this.UserLanguage = userLanguage;
     }
 }
 

@@ -19,11 +19,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -111,9 +114,9 @@ public class ProfileActivity extends AppCompatActivity {
                 if(language.trim().isEmpty()||country.trim().isEmpty()||imageUri==null){
                     Toast.makeText(getBaseContext(),"please choose all the fields",Toast.LENGTH_LONG).show();
                 }else{
-
-
-
+                    final String sameid=userId;
+                    final String newCountry=country;
+                    final String newLanguage=language;
 
                     final StorageReference reff = storageReference.child(userId);
                     UploadTask uploadTask = reff.putFile(imageUri);
@@ -137,28 +140,28 @@ public class ProfileActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
-                                userSettingsCollectionReference.add(new UserSetting( userId,country,downloadUri.toString(),language));
-                                Toast.makeText(ProfileActivity.this, "profile added", Toast.LENGTH_LONG).show();
-                                finish();
+                               final UserSetting usus=new UserSetting(sameid,newCountry,downloadUri.toString(),newLanguage);
+                                userSettingsCollectionReference.whereEqualTo("UserId",userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        Toast.makeText(ProfileActivity.this,"gooooood",Toast.LENGTH_LONG).show();
+                                        DocumentSnapshot ee = queryDocumentSnapshots.getDocuments().get(0);
+                                        ee.getReference().set(usus);
+                                        Toast.makeText(ProfileActivity.this, "profile edited", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+                                });
                             } else {
                                 Toast.makeText(ProfileActivity.this, "error", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
-
-
-
-
-
-
-
-
-
                 }
             }
         });
 
     }
+
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
