@@ -1,6 +1,8 @@
 package com.saher.authapp.model;
 
 public class UserSetting {
+
+    public static String FIELD_USER_ID = "userId";
     String UserId,UserCountry,UserImage,UserLanguage;
 
     public UserSetting(){}

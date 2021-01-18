@@ -141,12 +141,16 @@ public class ProfileActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
                                final UserSetting usus=new UserSetting(sameid,newCountry,downloadUri.toString(),newLanguage);
-                                userSettingsCollectionReference.whereEqualTo("UserId",userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                         Toast.makeText(ProfileActivity.this,"gooooood",Toast.LENGTH_LONG).show();
-                                        DocumentSnapshot ee = queryDocumentSnapshots.getDocuments().get(0);
-                                        ee.getReference().set(usus);
+                                        if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                            userSettingsCollectionReference.add(usus);
+                                        } else {
+                                            DocumentSnapshot ee = queryDocumentSnapshots.getDocuments().get(0);
+                                            ee.getReference().set(usus);
+                                        }
                                         Toast.makeText(ProfileActivity.this, "profile edited", Toast.LENGTH_LONG).show();
                                         finish();
                                     }
