@@ -97,10 +97,14 @@ public class EditItemActivity extends AppCompatActivity {
     }
 
     private void fillItemToFields(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemRef.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                Item it = queryDocumentSnapshots.getDocuments().get(0).toObject(Item.class);
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (!documentSnapshot.exists()) {
+                    return;
+                }
+
+                Item it = documentSnapshot.toObject(Item.class);
                 et_name.setText(it.getName().toString());
                 et_location.setText(it.getLocation());
                 et_price.setText(it.getPrice());

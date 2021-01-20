@@ -1,5 +1,7 @@
 package com.saher.authapp.model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class Item {
 
     public static final String COLLECTION_NAME = "Itembook";
@@ -100,6 +102,7 @@ public class Item {
         this.description = description;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }
