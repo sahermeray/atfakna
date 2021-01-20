@@ -3,6 +3,8 @@ package com.saher.authapp.model;
 public class UserSetting {
 
     public static String FIELD_USER_ID = "userId";
+    public static final String COLLECTION_NAME = "UserSetting";
+
     String UserId,UserCountry,UserImage,UserLanguage;
 
     public UserSetting(){}
