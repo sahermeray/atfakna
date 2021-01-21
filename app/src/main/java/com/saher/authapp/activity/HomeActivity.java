@@ -40,6 +40,8 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     UserSetting userSetting;
+    public static ImageView navimage;
+    public static TextView navusername;
 
 
     @Override
@@ -52,8 +54,8 @@ public class HomeActivity extends AppCompatActivity {
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         final NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView=navigationView.getHeaderView(0);
-        TextView navusername=(TextView)headerView.findViewById(R.id.nav_prof_name);
-        ImageView navimage=(ImageView)headerView.findViewById(R.id.nav_prof_image);
+        navusername=(TextView)headerView.findViewById(R.id.nav_prof_name);
+        navimage=(ImageView)headerView.findViewById(R.id.nav_prof_image);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -67,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser useriuser = firebaseAuth.getCurrentUser();
 
-        if ((useriuser != null && useriuser.isEmailVerified()) || y == 10) {
+        if (useriuser != null && useriuser.isEmailVerified()) {
             db.collection(UserSetting.COLLECTION_NAME)
                     .whereEqualTo(UserSetting.FIELD_USER_ID, useriuser.getUid())
                     .get()
@@ -80,8 +82,8 @@ public class HomeActivity extends AppCompatActivity {
                                         .get(0)
                                         .toObject(UserSetting.class);
                                 if (userSetting != null && userSetting.getUserImage() != null && !userSetting.getUserImage().equals("")) {
-                                    ImageView profileImage = findViewById(R.id.nav_prof_image);
-                                    Picasso.with(getBaseContext()).load(userSetting.getUserImage()).into(profileImage);
+                                    //ImageView profileImage = findViewById(R.id.nav_prof_image);
+                                    Picasso.with(getBaseContext()).load(userSetting.getUserImage()).into(navimage);
                                 }
                             }
                         }

@@ -46,6 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
         passwd = findViewById(R.id.ETpassword);
         btnSignUp = findViewById(R.id.btnSignUp);
         ccp=findViewById(R.id.create_account_country);
+        country=ccp.getSelectedCountryName();
 
         FirebaseUser useriuser = firebaseAuth.getCurrentUser();
         if (useriuser != null) {
@@ -75,9 +76,9 @@ public class SignUpActivity extends AppCompatActivity {
                     passwd.requestFocus();
                 } else if (emailID.isEmpty() && paswd.isEmpty()) {
                     Toast.makeText(SignUpActivity.this, "fields empty", Toast.LENGTH_LONG).show();
-                }else if(country.trim().isEmpty()){
+                }else if(country.isEmpty()){
                     Toast.makeText(SignUpActivity.this,"select country",Toast.LENGTH_LONG).show();
-                } else if (!(emailID.isEmpty() && paswd.isEmpty()&&country.trim().isEmpty())) {
+                } else if (!(emailID.isEmpty() && paswd.isEmpty()&&country.isEmpty())) {
                     SharedPreferences sharedPreferences;
                     sharedPreferences = getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();

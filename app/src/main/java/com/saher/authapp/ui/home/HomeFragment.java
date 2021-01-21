@@ -96,10 +96,11 @@ public class HomeFragment extends Fragment {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user.isEmailVerified()) {
                             verificationtv.setText("");
+                            HomeActivity.navusername.setText(user.getEmail());
 
-                            Intent intent = new Intent(getActivity().getBaseContext(), HomeActivity.class);
-                            intent.putExtra("message", 10);
-                            getActivity().startActivity(intent);
+                            //Intent intent = new Intent(getActivity().getBaseContext(), HomeActivity.class);
+                            //intent.putExtra("message", 10);
+                            //getActivity().startActivity(intent);
 
                         } else {
                             Toast.makeText(getContext(), "please verify your email", Toast.LENGTH_LONG).show();

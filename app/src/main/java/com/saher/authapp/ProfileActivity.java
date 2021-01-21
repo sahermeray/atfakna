@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -32,6 +34,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.hbb20.CountryCodePicker;
+import com.saher.authapp.activity.HomeActivity;
 import com.saher.authapp.activity.ViewItemActivity;
 import com.saher.authapp.model.Item;
 import com.saher.authapp.model.UserSetting;
@@ -49,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     Uri imageUri;
     StorageReference storageReference;
     Toolbar profileToolbar;
+    UserSetting userSetting;
 
 
     @Override
@@ -66,10 +70,10 @@ public class ProfileActivity extends AppCompatActivity {
         profileLanguage=findViewById(R.id.profile_language);
         profileSave=findViewById(R.id.profile_save);
         FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
-        FirebaseUser user=firebaseAuth.getCurrentUser();
+        final FirebaseUser user=firebaseAuth.getCurrentUser();
         userId=user.getUid();
         profileEmailTextview.setText(user.getEmail());
-        country=ccp.getDefaultCountryName();
+        country=ccp.getSelectedCountryName();
 
         ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
@@ -77,6 +81,43 @@ public class ProfileActivity extends AppCompatActivity {
                 country=ccp.getSelectedCountryName();
             }
         });
+
+
+
+
+
+        db.collection(UserSetting.COLLECTION_NAME)
+                .whereEqualTo(UserSetting.FIELD_USER_ID, user.getUid())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            userSetting = queryDocumentSnapshots
+                                    .getDocuments()
+                                    .get(0)
+                                    .toObject(UserSetting.class);
+                            if (userSetting != null && userSetting.getUserImage() != null && !userSetting.getUserImage().equals("")) {
+                                Picasso.with(getBaseContext()).load(userSetting.getUserImage()).into(profileImage);
+                                if(userSetting.getUserLanguage().equals("English")){
+                                    profileLanguage.setSelection(1);
+                                }else if(userSetting.getUserLanguage().equals("Arabic")){
+                                    profileLanguage.setSelection(2);
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+
+
+
+
+
+
+
+
 
         profileLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -139,19 +180,22 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
-                                Uri downloadUri = task.getResult();
-                               final UserSetting usus=new UserSetting(sameid,newCountry,downloadUri.toString(),newLanguage);
+                                final Uri downloadUri = task.getResult();
+                                Picasso.with(getBaseContext()).load(downloadUri.toString()).into(HomeActivity.navimage);
+                                final UserSetting usus=new UserSetting(sameid,newCountry,downloadUri.toString(),newLanguage);
                                 userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                        Toast.makeText(ProfileActivity.this,"gooooood",Toast.LENGTH_LONG).show();
                                         if (queryDocumentSnapshots.getDocuments().size() == 0) {
                                             userSettingsCollectionReference.add(usus);
                                         } else {
                                             DocumentSnapshot ee = queryDocumentSnapshots.getDocuments().get(0);
                                             ee.getReference().set(usus);
+
                                         }
-                                        Toast.makeText(ProfileActivity.this, "profile edited", Toast.LENGTH_LONG).show();
+
+
+                                        //Toast.makeText(ProfileActivity.this, "profile edited", Toast.LENGTH_LONG).show();
                                         finish();
                                     }
                                 });
