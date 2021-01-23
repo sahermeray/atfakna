@@ -184,11 +184,10 @@ public class EditItemActivity extends AppCompatActivity {
     }
 
     private void deleteItem(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemRef.document(itemId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
-                dd.getReference().delete();
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getBaseContext(), "Item deleted", Toast.LENGTH_SHORT).show();
             }
         });
         finish();
@@ -257,7 +256,6 @@ public class EditItemActivity extends AppCompatActivity {
                                         phone,
                                         description,
                                         id,
-                                        uniqueID,
                                         downloadUri.toString()
                                 );
                                 updateItem(documentSnapshot, item);
@@ -275,7 +273,6 @@ public class EditItemActivity extends AppCompatActivity {
                             phone,
                             description,
                             id,
-                            uniqueID,
                             existingItem.getImage());
                     updateItem(documentSnapshot, item);
                 }

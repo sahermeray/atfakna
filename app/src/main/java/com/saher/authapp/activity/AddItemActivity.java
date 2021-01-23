@@ -139,7 +139,7 @@ public class AddItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        final Item item = new Item(name, location, price, phone, description, id, uniqueID, downloadUri.toString());
+                        final Item item = new Item(name, location, price, phone, description, id, downloadUri.toString());
 
                         itemRef.add(item).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override

@@ -54,7 +54,7 @@ public class MyItemsFragment extends Fragment {
 
     private void setUpRecyclerView() {
         String id = FirebaseAuth.getInstance().getUid();
-        Query query = itemRef;
+        Query query = itemRef.whereEqualTo(Item.FIELD_USER_ID, id);
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>().setQuery(query, Item.class).build();
         adapter = new ItemAdapter(R.layout.item_list_item, options, new OnRecyclerViewItemClickListener() {
             @Override
