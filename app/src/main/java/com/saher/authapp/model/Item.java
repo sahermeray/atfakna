@@ -1,38 +1,30 @@
 package com.saher.authapp.model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class Item {
 
     public static final String COLLECTION_NAME = "Itembook";
+    public static final String FIELD_USER_ID = "userId";
 
     String name;
     String location;
     String price;
-    String phoneNumber;
+    String phonenumber;
     String description;
     String userId;
-    String uniqueID;
     String image;
     String id;
 
     public Item() {}
 
-    public Item(String name, String location, String price, String userId, String uniqueID, String image) {
+    public Item(String name, String location, String price, String phonenumber, String description, String userId, String image) {
         this.name = name;
         this.location = location;
         this.price = price;
-        this.userId = userId;
-        this.uniqueID = uniqueID;
-        this.image = image;
-    }
-
-    public Item(String name, String location, String price, String phoneNumber, String description, String userId, String uniqueID, String image) {
-        this.name = name;
-        this.location = location;
-        this.price = price;
-        this.phoneNumber = phoneNumber;
+        this.phonenumber = phonenumber;
         this.description = description;
         this.userId = userId;
-        this.uniqueID = uniqueID;
         this.image = image;
     }
 
@@ -42,14 +34,6 @@ public class Item {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public String getUniqueID() {
-        return uniqueID;
-    }
-
-    public void setUniqueID(String uniqueID) {
-        this.uniqueID = uniqueID;
     }
 
     public String getUserId() {
@@ -84,12 +68,12 @@ public class Item {
         this.price = price;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhonenumber() {
+        return phonenumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
     }
 
     public String getDescription() {
@@ -100,6 +84,7 @@ public class Item {
         this.description = description;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }

@@ -68,7 +68,7 @@ public class WatchlistFragment extends Fragment {
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     if (documentSnapshot.exists()) {
                                         Item item = documentSnapshot.toObject(Item.class);
-                                        item.setUniqueID(itemId);
+                                        item.setId(itemId);
                                         items.add(item);
                                         adapter.setItems(items);
                                         listView.setAdapter(adapter);

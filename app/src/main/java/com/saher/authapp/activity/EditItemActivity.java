@@ -97,14 +97,18 @@ public class EditItemActivity extends AppCompatActivity {
     }
 
     private void fillItemToFields(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemRef.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                Item it = queryDocumentSnapshots.getDocuments().get(0).toObject(Item.class);
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (!documentSnapshot.exists()) {
+                    return;
+                }
+
+                Item it = documentSnapshot.toObject(Item.class);
                 et_name.setText(it.getName().toString());
                 et_location.setText(it.getLocation());
                 et_price.setText(it.getPrice());
-                et_phone.setText(it.getPhoneNumber());
+                et_phone.setText(it.getPhonenumber());
                 et_description.setText(it.getDescription());
                 if (it.getImage() != null && !it.getImage().isEmpty()) {
                     Picasso.with(EditItemActivity.this).load(Uri.parse(it.getImage())).into(iv);
@@ -180,11 +184,10 @@ public class EditItemActivity extends AppCompatActivity {
     }
 
     private void deleteItem(String itemId) {
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemRef.document(itemId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
-                dd.getReference().delete();
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getBaseContext(), "Item deleted", Toast.LENGTH_SHORT).show();
             }
         });
         finish();
@@ -215,10 +218,9 @@ public class EditItemActivity extends AppCompatActivity {
             return;
         }
 
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemRef.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                final DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+            public void onSuccess(final DocumentSnapshot documentSnapshot) {
                 Item existingItem = documentSnapshot.toObject(Item.class);
 
                 if (null == existingItem) {
@@ -254,7 +256,6 @@ public class EditItemActivity extends AppCompatActivity {
                                         phone,
                                         description,
                                         id,
-                                        uniqueID,
                                         downloadUri.toString()
                                 );
                                 updateItem(documentSnapshot, item);
@@ -272,7 +273,6 @@ public class EditItemActivity extends AppCompatActivity {
                             phone,
                             description,
                             id,
-                            uniqueID,
                             existingItem.getImage());
                     updateItem(documentSnapshot, item);
                 }

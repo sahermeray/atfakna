@@ -88,7 +88,7 @@ public class ViewItemActivity extends AppCompatActivity {
                     itemTitleView.setText(item.getName().toString());
                     itemLocationView.setText(item.getLocation());
                     itemPriceView.setText(item.getPrice());
-                    itemPhoneView.setText(item.getPhoneNumber());
+                    itemPhoneView.setText(item.getPhonenumber());
                     itemDescriptionView.setText(item.getDescription());
                     if (item.getImage() != null && !item.getImage().isEmpty()) {
                         Picasso.with(ViewItemActivity.this).load(Uri.parse(item.getImage())).into(previewImageView);
@@ -232,7 +232,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, uniqueID, downloadUri.toString()));
+                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, downloadUri.toString()));
                         Toast.makeText(ViewItemActivity.this, "item added", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
@@ -273,7 +273,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        final Item itt = new Item(name, location, price, phone, description, id, uniqueID, downloadUri.toString());
+                        final Item itt = new Item(name, location, price, phone, description, id, downloadUri.toString());
                         itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
