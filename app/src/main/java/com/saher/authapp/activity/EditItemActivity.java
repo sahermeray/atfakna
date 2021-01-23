@@ -219,10 +219,9 @@ public class EditItemActivity extends AppCompatActivity {
             return;
         }
 
-        itemRef.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        itemRef.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                final DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+            public void onSuccess(final DocumentSnapshot documentSnapshot) {
                 Item existingItem = documentSnapshot.toObject(Item.class);
 
                 if (null == existingItem) {
