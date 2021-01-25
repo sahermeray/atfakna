@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,8 @@ public class HomeActivity extends AppCompatActivity {
     public static TextView navusername;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser useriuser = firebaseAuth.getCurrentUser();
 
-        if (useriuser != null && useriuser.isEmailVerified()) {
+        if ((useriuser != null && useriuser.isEmailVerified())||y==10) {
             db.collection(UserSetting.COLLECTION_NAME)
                     .whereEqualTo(UserSetting.FIELD_USER_ID, useriuser.getUid())
                     .get()
@@ -107,7 +110,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
-        navusername.setOnClickListener(new View.OnClickListener() {
+        headerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent inte=new Intent(getApplicationContext(),ProfileActivity.class);

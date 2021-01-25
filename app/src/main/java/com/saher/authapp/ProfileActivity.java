@@ -98,11 +98,11 @@ public class ProfileActivity extends AppCompatActivity {
                                     .get(0)
                                     .toObject(UserSetting.class);
                             if (userSetting != null && userSetting.getUserImage() != null && !userSetting.getUserImage().equals("")) {
-                                Picasso.with(getBaseContext()).load(userSetting.getUserImage()).into(profileImage);
+                                Picasso.with(getBaseContext()).load(userSetting.getUserImage()).fit().centerCrop().into(profileImage);
                                 if(userSetting.getUserLanguage().equals("English")){
-                                    profileLanguage.setSelection(1);
+                                    profileLanguage.setSelection(0);
                                 }else if(userSetting.getUserLanguage().equals("Arabic")){
-                                    profileLanguage.setSelection(2);
+                                    profileLanguage.setSelection(1);
                                 }
                             }
                         }
@@ -124,14 +124,12 @@ public class ProfileActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i){
                     case 0:
-                        language="";
-                        break;
-                    case 1:
                         language="English";
                         break;
-                    case 2:
+                    case 1:
                         language="Arabic";
                         break;
+
                 }
             }
 
@@ -152,9 +150,14 @@ public class ProfileActivity extends AppCompatActivity {
         profileSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(language.trim().isEmpty()||country.trim().isEmpty()||imageUri==null){
-                    Toast.makeText(getBaseContext(),"please choose all the fields",Toast.LENGTH_LONG).show();
-                }else{
+                if(language.trim().isEmpty()||country.trim().isEmpty()){
+                    Toast.makeText(getBaseContext(),"you must select the Language and the Country",Toast.LENGTH_LONG).show();
+                }
+
+
+
+
+                 if(imageUri!=null){
                     final String sameid=userId;
                     final String newCountry=country;
                     final String newLanguage=language;
@@ -181,7 +184,7 @@ public class ProfileActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 final Uri downloadUri = task.getResult();
-                                Picasso.with(getBaseContext()).load(downloadUri.toString()).into(HomeActivity.navimage);
+                                Picasso.with(getBaseContext()).load(downloadUri.toString()).fit().centerCrop().into(HomeActivity.navimage);
                                 final UserSetting usus=new UserSetting(sameid,newCountry,downloadUri.toString(),newLanguage);
                                 userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
@@ -202,6 +205,58 @@ public class ProfileActivity extends AppCompatActivity {
                             } else {
                                 Toast.makeText(ProfileActivity.this, "error", Toast.LENGTH_LONG).show();
                             }
+                        }
+                    });
+                }else {
+
+                     db.collection(UserSetting.COLLECTION_NAME)
+                             .whereEqualTo(UserSetting.FIELD_USER_ID, user.getUid())
+                             .get()
+                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                 @Override
+                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                     if (!queryDocumentSnapshots.isEmpty()) {
+                                         userSetting = queryDocumentSnapshots
+                                                 .getDocuments()
+                                                 .get(0)
+                                                 .toObject(UserSetting.class);
+                                         if (null == userSetting) {
+                                             return;
+                                         }
+
+                                     }}});
+
+
+
+                    final String sameid=userId;
+                    final String newCountry=country;
+                    final String newLanguage=language;
+                    //String image="";
+
+
+                    if(userSetting.getUserImage().equals("")){
+                    HomeActivity.navimage.setImageResource(R.drawable.ic_person_100);
+                    //image="";
+                    }
+                    else if(!userSetting.getUserImage().equals("")){
+                        Picasso.with(getBaseContext()).load(userSetting.getUserImage()).fit().centerCrop().into(HomeActivity.navimage);
+                        //image=userSetting.getUserImage();
+                    }
+                     final UserSetting usus=new UserSetting(sameid,newCountry,userSetting.getUserImage(),newLanguage);
+                     userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                userSettingsCollectionReference.add(usus);
+                            } else {
+                                DocumentSnapshot ee = queryDocumentSnapshots.getDocuments().get(0);
+                                ee.getReference().set(usus);
+
+                            }
+
+
+                            //Toast.makeText(ProfileActivity.this, "profile edited", Toast.LENGTH_LONG).show();
+                            finish();
                         }
                     });
                 }
