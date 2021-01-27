@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,16 +23,28 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.saher.authapp.ProfileActivity;
 import com.saher.authapp.R;
+import com.saher.authapp.model.UserSetting;
+import com.squareup.picasso.Picasso;
 
 public class HomeActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private SearchView.OnQueryTextListener queryTextListener;
     FirebaseAuth firebaseAuth;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    UserSetting userSetting;
+    public static ImageView navimage;
+    public static TextView navusername;
+
+
 
 
     @Override
@@ -39,7 +55,10 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView=navigationView.getHeaderView(0);
+        navusername=(TextView)headerView.findViewById(R.id.nav_prof_name);
+        navimage=(ImageView)headerView.findViewById(R.id.nav_prof_image);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -51,9 +70,30 @@ public class HomeActivity extends AppCompatActivity {
         final int y = i.getIntExtra("message", 0);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser useriuser = firebaseAuth.getCurrentUser();
+        final FirebaseUser useriuser = firebaseAuth.getCurrentUser();
 
-        if ((useriuser != null && useriuser.isEmailVerified()) || y == 10) {
+        if ((useriuser != null && useriuser.isEmailVerified())||y==10) {
+            db.collection(UserSetting.COLLECTION_NAME)
+                    .whereEqualTo(UserSetting.FIELD_USER_ID, useriuser.getUid())
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                userSetting = queryDocumentSnapshots
+                                        .getDocuments()
+                                        .get(0)
+                                        .toObject(UserSetting.class);
+                                if (userSetting != null && userSetting.getUserImage() != null && !userSetting.getUserImage().equals("")) {
+                                    //ImageView profileImage = findViewById(R.id.nav_prof_image);
+                                    Picasso.with(getBaseContext()).load(userSetting.getUserImage()).into(navimage);
+                                }
+                            }
+                        }
+                    });
+
+
+            navusername.setText(useriuser.getEmail());
             navigationView.getMenu().findItem(R.id.nav_home).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(true);
@@ -68,6 +108,15 @@ public class HomeActivity extends AppCompatActivity {
             navigationView.getMenu().findItem(R.id.nav_create_account).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
         }
+
+
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent inte=new Intent(getApplicationContext(),ProfileActivity.class);
+                startActivity(inte);
+            }
+        });
 
 
         final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

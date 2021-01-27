@@ -6,6 +6,10 @@
         <item>more than</item>
         <item>less than</item>
     </string-array>
+    <string-array name="language">
+        <item>English</item>
+        <item>Arabic</item>
+    </string-array>
     <string name="title_activity_home">HomeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
