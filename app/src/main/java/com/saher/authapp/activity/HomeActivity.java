@@ -129,6 +129,7 @@ public class HomeActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
                 if (id == R.id.nav_logout) {
+                    firebaseAuth.signOut();
                     finishAffinity();
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
+        if (userEmail != "" && userPaswd != "" && user != null) {
             firebaseAuth.signInWithEmailAndPassword(userEmail, userPaswd).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {

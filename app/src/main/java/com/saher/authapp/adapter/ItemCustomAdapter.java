@@ -58,7 +58,7 @@ public class ItemCustomAdapter extends ArrayAdapter<Item> {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewItemActivity.class);
                 intent.putExtra("COMING_FROM_USER_ACTIVITY", 1);
-                intent.putExtra("ITEM_ID", currentItem.getUniqueID());
+                intent.putExtra("ITEM_ID", currentItem.getId());
                 mContext.startActivity(intent);
             }
         });
