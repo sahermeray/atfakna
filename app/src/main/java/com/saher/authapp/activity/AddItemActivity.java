@@ -111,6 +111,7 @@ public class AddItemActivity extends AppCompatActivity {
         final String description = et_description.getText().toString();
         final String id = FirebaseAuth.getInstance().getUid();
         final String uniqueID = itemId;
+        final String userEmail=FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         if (name.trim().isEmpty() || description.trim().isEmpty()) {
             Toast.makeText(this, "article name and description must be filled", Toast.LENGTH_SHORT).show();
@@ -139,7 +140,7 @@ public class AddItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        final Item item = new Item(name, location, price, phone, description, id, downloadUri.toString());
+                        final Item item = new Item(name, location, price, phone, description, id, downloadUri.toString(),userEmail);
 
                         itemRef.add(item).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override

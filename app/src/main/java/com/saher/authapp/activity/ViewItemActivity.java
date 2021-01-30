@@ -37,7 +37,7 @@ import java.util.UUID;
 public class ViewItemActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQ_CODE = 1;
     Toolbar viewItemToolbar;
-    TextView itemTitleView, itemLocationView, itemPriceView, itemPhoneView, itemDescriptionView;
+    TextView itemTitleView, itemLocationView, itemPriceView, itemPhoneView, itemDescriptionView,itemEmail;
     String itemId = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     final CollectionReference itemsCollectionReference = db.collection(Item.COLLECTION_NAME);
@@ -64,20 +64,22 @@ public class ViewItemActivity extends AppCompatActivity {
         itemPriceView = findViewById(R.id.item_price);
         itemPhoneView = findViewById(R.id.activity_view_item_phone);
         itemDescriptionView = findViewById(R.id.activity_view_item_description);
+        itemEmail=findViewById(R.id.activity_view_item_email);
         previewImageView = findViewById(R.id.view_item_iv);
         storageReference = FirebaseStorage.getInstance().getReference();
 
         Intent intent = getIntent();
         comingfromuseractivity = intent.getIntExtra("COMING_FROM_USER_ACTIVITY", 0);
         itemId = intent.getStringExtra("ITEM_ID");
-        if (comingfromuseractivity == 0) {
-            if (itemId != null) {
+        if (comingfromuseractivity == 1) {
                 fillItemToFields(itemId);
             }
-        } else {
-            fillItemToFields(itemId);
+        else if(comingfromuseractivity == 2) {
+            fillsomeItemToFields(itemId);
         }
-    }
+        }
+
+
 
     private void fillItemToFields(String itemId) {
         itemsCollectionReference.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -90,6 +92,7 @@ public class ViewItemActivity extends AppCompatActivity {
                     itemPriceView.setText(item.getPrice());
                     itemPhoneView.setText(item.getPhonenumber());
                     itemDescriptionView.setText(item.getDescription());
+                    itemEmail.setText(item.getUserEmail());
                     if (item.getImage() != null && !item.getImage().isEmpty()) {
                         Picasso.with(ViewItemActivity.this).load(Uri.parse(item.getImage())).into(previewImageView);
                     } else {
@@ -110,6 +113,40 @@ public class ViewItemActivity extends AppCompatActivity {
         });
     }
 
+
+    private void fillsomeItemToFields(String itemId) {
+        itemsCollectionReference.document(itemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Item item = documentSnapshot.toObject(Item.class);
+                    itemTitleView.setText(item.getName().toString());
+                    itemLocationView.setText(item.getLocation());
+                    itemPriceView.setText(item.getPrice());
+                    itemPhoneView.setText("create account to see phone number");
+                    itemDescriptionView.setText(item.getDescription());
+                    itemEmail.setText("create account to see email");
+                    if (item.getImage() != null && !item.getImage().isEmpty()) {
+                        Picasso.with(ViewItemActivity.this).load(Uri.parse(item.getImage())).into(previewImageView);
+                    } else {
+                        previewImageView.setImageResource(R.drawable.ic_shopping);
+                    }
+                }
+            }
+        });
+
+        watchedItemCollectionReference.whereEqualTo("itemIdl", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.isEmpty()) {
+                    return;
+                }
+                watchMenuItem.setIcon(R.drawable.ic_loveit);
+                isItemWatched = true;
+            }
+        });
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_item_menu, menu);
@@ -120,8 +157,13 @@ public class ViewItemActivity extends AppCompatActivity {
         saveMenuItem.setVisible(false);
         editMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
+
+        if(comingfromuseractivity==1){
         watchMenuItem.setVisible(true);
         watchMenuItem.setIcon(R.drawable.ic_watchlist);
+        }else if(comingfromuseractivity==2){
+          watchMenuItem.setVisible(false);
+        }
 
         return true;
     }
@@ -205,6 +247,8 @@ public class ViewItemActivity extends AppCompatActivity {
             final String description = itemDescriptionView.getText().toString();
             final String userId = FirebaseAuth.getInstance().getUid();
             final String uniqueID = UUID.randomUUID().toString();
+            final String userEmail=FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
             String imageName = userId + "/" + uniqueID + ".jpg";
             if (name.trim().isEmpty() || location.trim().isEmpty() || price.trim().isEmpty() || phone.trim().isEmpty() || description.trim().isEmpty() || imageUri == null) {
                 Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
@@ -232,7 +276,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, downloadUri.toString()));
+                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, downloadUri.toString(),userEmail));
                         Toast.makeText(ViewItemActivity.this, "item added", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
@@ -248,6 +292,7 @@ public class ViewItemActivity extends AppCompatActivity {
             final String description = itemDescriptionView.getText().toString();
             final String id = FirebaseAuth.getInstance().getUid();
             final String uniqueID = itemId;
+            final String userEmail=FirebaseAuth.getInstance().getCurrentUser().getEmail();
             String imagename = id + "/" + uniqueID + ".jpg";
             if (name.trim().isEmpty() || location.trim().isEmpty() || price.trim().isEmpty() || phone.trim().isEmpty() || description.trim().isEmpty() || imageUri == null) {
                 Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
@@ -273,7 +318,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        final Item itt = new Item(name, location, price, phone, description, id, downloadUri.toString());
+                        final Item itt = new Item(name, location, price, phone, description, id, downloadUri.toString(),userEmail);
                         itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

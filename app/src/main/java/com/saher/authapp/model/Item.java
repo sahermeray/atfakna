@@ -15,10 +15,12 @@ public class Item {
     String userId;
     String image;
     String id;
+    String userEmail;
+
 
     public Item() {}
 
-    public Item(String name, String location, String price, String phonenumber, String description, String userId, String image) {
+    public Item(String name, String location, String price, String phonenumber, String description, String userId, String image,String userEmail) {
         this.name = name;
         this.location = location;
         this.price = price;
@@ -26,6 +28,16 @@ public class Item {
         this.description = description;
         this.userId = userId;
         this.image = image;
+        this.userEmail=userEmail;
+
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getImage() {
@@ -92,4 +104,6 @@ public class Item {
     public void setId(String id) {
         this.id = id;
     }
+
+
 }

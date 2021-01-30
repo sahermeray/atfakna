@@ -131,7 +131,10 @@ public class HomeFragment extends Fragment {
                     i.putExtra("ITEM_ID", Item_Id);
                     startActivity(i);
                 } else if (currentUser == null) {
-                    Toast.makeText(getContext(), "you have to create account or login first", Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(getContext(), ViewItemActivity.class);
+                    i.putExtra("COMING_FROM_USER_ACTIVITY", 2);
+                    i.putExtra("ITEM_ID", Item_Id);
+                    startActivity(i);
                 }
             }
 

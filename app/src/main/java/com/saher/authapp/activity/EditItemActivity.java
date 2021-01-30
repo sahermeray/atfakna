@@ -212,6 +212,8 @@ public class EditItemActivity extends AppCompatActivity {
         final String description = et_description.getText().toString();
         final String id = FirebaseAuth.getInstance().getUid();
         final String uniqueID = itemId;
+        final String userEmail=FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
 
         if (name.trim().isEmpty() || description.trim().isEmpty()) {
             Toast.makeText(this, "article name and description must be filled", Toast.LENGTH_SHORT).show();
@@ -256,7 +258,9 @@ public class EditItemActivity extends AppCompatActivity {
                                         phone,
                                         description,
                                         id,
-                                        downloadUri.toString()
+                                        downloadUri.toString(),
+                                        userEmail
+
                                 );
                                 updateItem(documentSnapshot, item);
 
@@ -273,7 +277,9 @@ public class EditItemActivity extends AppCompatActivity {
                             phone,
                             description,
                             id,
-                            existingItem.getImage());
+                            existingItem.getImage(),
+                            userEmail
+                            );
                     updateItem(documentSnapshot, item);
                 }
                 Toast.makeText(EditItemActivity.this, "item edited", Toast.LENGTH_LONG).show();
