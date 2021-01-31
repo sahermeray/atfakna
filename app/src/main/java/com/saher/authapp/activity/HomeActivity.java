@@ -113,8 +113,11 @@ public class HomeActivity extends AppCompatActivity {
         headerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(navusername.getText().length()!=0){
                 Intent inte=new Intent(getApplicationContext(),ProfileActivity.class);
-                startActivity(inte);
+                startActivity(inte);}else{
+                    return;
+                }
             }
         });
 
