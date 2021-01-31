@@ -172,15 +172,10 @@ public class ViewItemActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save:
-                saveItem();
                 return true;
             case R.id.edit:
-                saveMenuItem.setVisible(true);
-                deleteMenuItem.setVisible(false);
-                editMenuItem.setVisible(false);
                 return true;
             case R.id.delete:
-                deleteItem(itemId);
                 return true;
             case R.id.loveit:
                 if (isItemWatched) {
@@ -200,16 +195,6 @@ public class ViewItemActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteItem(String itemId) {
-        itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
-                dd.getReference().delete();
-            }
-        });
-        finish();
-    }
 
     private void addToWatchlist() {
         watchMenuItem.setIcon(R.drawable.ic_loveit);
@@ -238,103 +223,6 @@ public class ViewItemActivity extends AppCompatActivity {
         Toast.makeText(ViewItemActivity.this, "item has been added to your watchlist", Toast.LENGTH_LONG).show();
     }
 
-    private void saveItem() {
-        if (itemId == null) {
-            final String name = itemTitleView.getText().toString();
-            final String location = itemLocationView.getText().toString();
-            final String price = itemPriceView.getText().toString();
-            final String phone = itemPhoneView.getText().toString();
-            final String description = itemDescriptionView.getText().toString();
-            final String userId = FirebaseAuth.getInstance().getUid();
-            final String uniqueID = UUID.randomUUID().toString();
-            final String userEmail=FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-            String imageName = userId + "/" + uniqueID + ".jpg";
-            if (name.trim().isEmpty() || location.trim().isEmpty() || price.trim().isEmpty() || phone.trim().isEmpty() || description.trim().isEmpty() || imageUri == null) {
-                Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            final StorageReference reff = storageReference.child(imageName);
-            UploadTask uploadTask = reff.putFile(imageUri);
-
-
-            Task<Uri> urlTask = uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(ViewItemActivity.this, "your item is uploading...", Toast.LENGTH_LONG).show();
-                }
-            }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    return reff.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        itemsCollectionReference.add(new Item(name, location, price, phone, description, userId, downloadUri.toString(),userEmail));
-                        Toast.makeText(ViewItemActivity.this, "item added", Toast.LENGTH_LONG).show();
-                        finish();
-                    } else {
-                        Toast.makeText(ViewItemActivity.this, "error", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        } else {
-            final String name = itemTitleView.getText().toString();
-            final String location = itemLocationView.getText().toString();
-            final String price = itemPriceView.getText().toString();
-            final String phone = itemPhoneView.getText().toString();
-            final String description = itemDescriptionView.getText().toString();
-            final String id = FirebaseAuth.getInstance().getUid();
-            final String uniqueID = itemId;
-            final String userEmail=FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            String imagename = id + "/" + uniqueID + ".jpg";
-            if (name.trim().isEmpty() || location.trim().isEmpty() || price.trim().isEmpty() || phone.trim().isEmpty() || description.trim().isEmpty() || imageUri == null) {
-                Toast.makeText(this, "insert all the fields please", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            final StorageReference reff = storageReference.child(imagename);
-            UploadTask uploadTask = reff.putFile(imageUri);
-            Task<Uri> urlTask = uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(ViewItemActivity.this, "your item is being edited...", Toast.LENGTH_LONG).show();
-                }
-            }).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    return reff.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        final Item itt = new Item(name, location, price, phone, description, id, downloadUri.toString(),userEmail);
-                        itemsCollectionReference.whereEqualTo("uniqueID", itemId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                DocumentSnapshot dd = queryDocumentSnapshots.getDocuments().get(0);
-                                dd.getReference().set(itt);
-                                Toast.makeText(ViewItemActivity.this, "item edited", Toast.LENGTH_LONG).show();
-                                finish();
-                            }
-                        });
-                    } else {
-                        Toast.makeText(ViewItemActivity.this, "error", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-    }
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
