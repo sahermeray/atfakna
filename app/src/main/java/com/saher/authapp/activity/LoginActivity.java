@@ -28,10 +28,13 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.saher.authapp.R;
+import com.saher.authapp.model.UserSetting;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -133,35 +136,86 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 // App code
                 handelFacebookResponse(loginResult.getAccessToken());
+                handelFacebookAuth(loginResult.getAccessToken());
+
             }
 
             @Override
             public void onCancel() {
-                Log.i("DEBUG", "canceled");
+                Toast.makeText(LoginActivity.this,"cancel",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(FacebookException exception) {
-                Log.i("DEBUG", exception.toString());
+                Toast.makeText(LoginActivity.this,"error "+exception.toString(),Toast.LENGTH_LONG).show();
             }
         });
 
-        loginButton.callOnClick();
+       // loginButton.callOnClick();
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackmanager.onActivityResult(requestCode, resultCode, data);
+        callbackmanager.onActivityResult(requestCode, resultCode, data);}
+
+
+
+
+
+    private void handelFacebookAuth(AccessToken token) {
+        AuthCredential credential= FacebookAuthProvider.getCredential(token.getToken());
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    FirebaseUser user=firebaseAuth.getCurrentUser();
+                    String useeerid=user.getUid();
+                    Intent i=new Intent(LoginActivity.this,HomeActivity.class);
+                    i.putExtra("comefromface",5);
+                    startActivity(i);
+
+                } else{
+                    Toast.makeText(LoginActivity.this,"authrnication failed",Toast.LENGTH_LONG).show();
+
+
+                }
+            }
+        });
+
+    }
+
+
+
 
 //        AccessToken token = AccessToken.getCurrentAccessToken();
 //        if (token != null){
 //            handelFacebookResponse(token);
 //        }
-    }
+
 
     private void handelFacebookResponse(AccessToken token) {
+
+        /*AuthCredential credential= FacebookAuthProvider.getCredential(token.getToken());
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(LoginActivity.this,"hello facebook",Toast.LENGTH_LONG).show();
+                    FirebaseUser user=firebaseAuth.getCurrentUser();
+                    Intent i=new Intent(LoginActivity.this,HomeActivity.class);
+                    startActivity(i);
+                    //updateUI(user);
+                } else{
+                    Toast.makeText(LoginActivity.this,"authrnication failed",Toast.LENGTH_LONG).show();
+                    //updateUI(null);
+
+                }
+            }
+        });*/
+
+
 
         Log.i("DEBUG", "token: " + token.getToken());
 
@@ -172,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                         String first_name = object.getString("first_name");
                         String last_name = object.getString("last_name");
                         String email = object.getString("email");
+
 
                         Log.i("DEBUG", email);
 
@@ -184,5 +239,8 @@ public class LoginActivity extends AppCompatActivity {
         parameters.putString("fields", "first_name,last_name,email,id");
         request.setParameters(parameters);
         request.executeAsync();
+
+
+
     }
 }

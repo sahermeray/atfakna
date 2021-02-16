@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">AuthApp</string>
+
+
     <string-array name="search">
         <item>item</item>
         <item>location</item>
@@ -36,7 +38,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string name="facebook_app_id">799082930678033</string>
-    <string name="fb_login_protocol_scheme"></string>
+    <string name="fb_login_protocol_scheme">799082930678033</string>
 
 
 </resources>
