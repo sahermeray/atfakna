@@ -23,10 +23,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.saher.authapp.ProfileActivity;
@@ -43,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
     UserSetting userSetting;
     public static ImageView navimage;
     public static TextView navusername;
+    public int x=0;
 
 
 
@@ -50,6 +54,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
+
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,11 +77,24 @@ public class HomeActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         final int y = i.getIntExtra("message", 0);
+        final int z=i.getIntExtra("comefromface",0);
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser useriuser = firebaseAuth.getCurrentUser();
+        if(useriuser!=null) {
+            for (UserInfo user : useriuser.getProviderData()) {
+                if (user.getProviderId().equals("facebook.com")) {
+                    x = 10;
+                    break;
+                }
+            }
+        }
+        //if(useriuser!=null){
+            //UserInfo user=useriuser.getProviderData().get(0);
+        //}
 
-        if ((useriuser != null && useriuser.isEmailVerified())||y==10) {
+
+        if ((useriuser != null && useriuser.isEmailVerified())||x==10||y==10||z==5) {
             db.collection(UserSetting.COLLECTION_NAME)
                     .whereEqualTo(UserSetting.FIELD_USER_ID, useriuser.getUid())
                     .get()
