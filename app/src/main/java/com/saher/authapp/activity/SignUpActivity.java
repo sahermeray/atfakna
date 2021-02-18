@@ -182,6 +182,13 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void handelFacebookAuth(AccessToken token) {
         AuthCredential credential= FacebookAuthProvider.getCredential(token.getToken());
+
+        //SharedPreferences sharedPreferences;
+        //sharedPreferences = getSharedPreferences("face", Context.MODE_PRIVATE);
+        //SharedPreferences.Editor editor = sharedPreferences.edit();
+        //editor.putString("signinwithfacebook",credential.getSignInMethod());
+        //editor.commit();
+
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {

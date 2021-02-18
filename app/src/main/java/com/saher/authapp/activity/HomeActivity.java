@@ -25,6 +25,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -154,6 +155,15 @@ public class HomeActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
                 if (id == R.id.nav_logout) {
+                    final FirebaseUser useriuser = firebaseAuth.getCurrentUser();
+                    if(useriuser!=null) {
+                        for (UserInfo user : useriuser.getProviderData()) {
+                            if (user.getProviderId().equals("facebook.com")) {
+                                LoginManager.getInstance().logOut();
+                                break;
+                            }
+                        }
+                    }
                     firebaseAuth.signOut();
                     finishAffinity();
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
