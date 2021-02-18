@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -38,6 +39,8 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     FirebaseAuth firebaseAuth;
     TextView verificationtv;
+    public int h=0;
+    public int d=0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -47,43 +50,57 @@ public class HomeFragment extends Fragment {
         recyclerView = root.findViewById(R.id.home_fragment);
         firebaseAuth = FirebaseAuth.getInstance();
         verificationtv = root.findViewById(R.id.verification_text);
+        verificationtv.setText("");
 
         SharedPreferences mpref = this.getActivity().getSharedPreferences("emailandpassword", 0);
         final String userPaswd = mpref.getString("password", "");
         final String userEmail = mpref.getString("email", "");
-        //Toast.makeText(getContext(),"your email "+userEmail+" your password "+userPaswd,Toast.LENGTH_LONG).show();
+        //SharedPreferences mpref2=this.getActivity().getSharedPreferences("face",0);
+        //final String signwithface=mpref2.getString("signinwithfacebook","");
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (userEmail != "" && userPaswd != "" && user != null) {
-            firebaseAuth.signInWithEmailAndPassword(userEmail, userPaswd).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(getContext(), "not successful", Toast.LENGTH_LONG).show();
-                    } else {
-                        //Toast.makeText(getContext(), "welcome", Toast.LENGTH_LONG).show();
-
-                        if (!user.isEmailVerified()) {
 
 
-                            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(getContext(), "we sent you a link..please verify your email address and press continue", Toast.LENGTH_LONG).show();
-                                    verificationtv.setText("please verify your email and CLICK HERE");
-                                }
-                            });
+        if(user!=null) {
+            for (UserInfo userinfo : user.getProviderData()) {
+                if (userinfo.getProviderId().equals("facebook.com")) {
+                    d = 10;
+                    break;
+                }
+            }
+        }
+        if(d!=10) {
+            if (userEmail != "" && userPaswd != "" && user != null) {
+                firebaseAuth.signInWithEmailAndPassword(userEmail, userPaswd).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(getContext(), "not successful", Toast.LENGTH_LONG).show();
+                        } else {
+                            //Toast.makeText(getContext(), "welcome", Toast.LENGTH_LONG).show();
 
-                        } else if (user.isEmailVerified()) {
-                            verificationtv.setText("");
+                            if (!user.isEmailVerified()) {
 
+
+                                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(getContext(), "we sent you a link..please verify your email address and press continue", Toast.LENGTH_LONG).show();
+                                        verificationtv.setText("please verify your email and CLICK HERE");
+                                    }
+                                });
+
+                            } else if (user.isEmailVerified()) {
+                                verificationtv.setText("");
+
+
+                            }
 
                         }
-
                     }
-                }
-            });
+                });
+            }
         }
 
         verificationtv.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +135,14 @@ public class HomeFragment extends Fragment {
 
     private void setUpRecyclerView() {
         final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if(currentUser!=null) {
+            for (UserInfo user : currentUser.getProviderData()) {
+                if (user.getProviderId().equals("facebook.com")) {
+                    h = 10;
+                    break;
+                }
+            }
+        }
         Query query = itemsCollectionReference.orderBy("name", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>()
                 .setQuery(query, Item.class)
@@ -125,7 +150,7 @@ public class HomeFragment extends Fragment {
         ItemAdapter adapter = new ItemAdapter(options, new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String Item_Id) {
-                if (currentUser != null && currentUser.isEmailVerified()) {
+                if ((currentUser != null && currentUser.isEmailVerified())||h==10) {
                     Intent i = new Intent(getContext(), ViewItemActivity.class);
                     i.putExtra("COMING_FROM_USER_ACTIVITY", 1);
                     i.putExtra("ITEM_ID", Item_Id);
