@@ -182,7 +182,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-       //loginButton.callOnClick();
+
 
     }
     private void signIn(){
@@ -200,10 +200,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         }
 
-//        AccessToken token = AccessToken.getCurrentAccessToken();
-//        if (token != null){
-//            handelFacebookResponse(token);
-//        }
+
     }
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask){
         try{

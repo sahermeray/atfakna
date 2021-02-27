@@ -33,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -40,6 +41,10 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.saher.authapp.R;
 import com.saher.authapp.model.UserSetting;
 
@@ -58,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
     Toolbar logintoolbar;
     CallbackManager callbackmanager;
     GoogleSignInClient mGoogleSignInClient;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final CollectionReference userSettingsCollectionReference = db.collection("UserSetting");
 
 
 
@@ -210,6 +217,17 @@ public class LoginActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     FirebaseUser user=firebaseAuth.getCurrentUser();
                     String useeerid=user.getUid();
+                    userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,useeerid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                userSettingsCollectionReference.add(new UserSetting(useeerid,"syria","","English"));
+                            } else {
+                                return;
+                            }
+                            finish();
+                        }
+                    });
                     Toast.makeText(LoginActivity.this,user.getEmail(),Toast.LENGTH_LONG).show();
                     Intent i=new Intent(LoginActivity.this,HomeActivity.class);
                     i.putExtra("comefromgoogle",5);
@@ -234,6 +252,17 @@ public class LoginActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     FirebaseUser user=firebaseAuth.getCurrentUser();
                     String useeerid=user.getUid();
+                    userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,useeerid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                userSettingsCollectionReference.add(new UserSetting(useeerid,"syria","","English"));
+                            } else {
+                               return;
+                            }
+                            finish();
+                        }
+                    });
                     Intent i=new Intent(LoginActivity.this,HomeActivity.class);
                     i.putExtra("comefromface",5);
                     startActivity(i);
@@ -251,10 +280,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-//        AccessToken token = AccessToken.getCurrentAccessToken();
-//        if (token != null){
-//            handelFacebookResponse(token);
-//        }
 
 
     private void handelFacebookResponse(AccessToken token) {
