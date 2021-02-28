@@ -97,13 +97,14 @@ public class ProfileActivity extends AppCompatActivity {
                                     .getDocuments()
                                     .get(0)
                                     .toObject(UserSetting.class);
-                            if (userSetting != null && userSetting.getUserImage() != null && !userSetting.getUserImage().equals("")) {
-                                Picasso.with(getBaseContext()).load(userSetting.getUserImage()).fit().centerCrop().into(profileImage);
+
                                 if(userSetting.getUserLanguage().equals("English")){
                                     profileLanguage.setSelection(0);
                                 }else if(userSetting.getUserLanguage().equals("Arabic")){
                                     profileLanguage.setSelection(1);
                                 }
+                            if (userSetting != null && userSetting.getUserImage() != null && !userSetting.getUserImage().equals("")) {
+                                Picasso.with(getBaseContext()).load(userSetting.getUserImage()).fit().centerCrop().into(profileImage);
                             }
                         }
                     }

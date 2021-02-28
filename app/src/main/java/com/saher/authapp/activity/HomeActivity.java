@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -90,9 +92,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         }
-        //if(useriuser!=null){
-            //UserInfo user=useriuser.getProviderData().get(0);
-        //}
 
 
         if ((useriuser != null && useriuser.isEmailVerified())||x==10||y==10||z==5) {
@@ -161,6 +160,7 @@ public class HomeActivity extends AppCompatActivity {
                             if (user.getProviderId().equals("facebook.com")) {
                                 LoginManager.getInstance().logOut();
                                 break;
+
                             }
                         }
                     }
