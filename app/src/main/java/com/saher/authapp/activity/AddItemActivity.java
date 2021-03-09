@@ -21,15 +21,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.saher.authapp.R;
 import com.saher.authapp.model.Item;
+import com.saher.authapp.model.UserSetting;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -43,11 +46,13 @@ public class AddItemActivity extends AppCompatActivity {
     String itemId = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     final CollectionReference itemRef = db.collection(Item.COLLECTION_NAME);
+    final CollectionReference userSettingsCollectionReference = db.collection("UserSetting");
     MenuItem save;
     MenuItem delete;
     ImageView imageView;
     FirebaseStorage firebasestorage;
     StorageReference storageRef;
+
 
 
     @Override
@@ -64,6 +69,16 @@ public class AddItemActivity extends AppCompatActivity {
         imageView = findViewById(R.id.activity_add_item_image_view);
         firebasestorage = FirebaseStorage.getInstance();
         storageRef = firebasestorage.getReference();
+        FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
+        FirebaseUser user=firebaseAuth.getCurrentUser();
+        userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,user.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                UserSetting us=queryDocumentSnapshots.getDocuments().get(0).toObject(UserSetting.class);
+                et_location.setText(us.getUserCountry());
+            }
+        });
+
 
 
         Intent intent = getIntent();
