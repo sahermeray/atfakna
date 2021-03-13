@@ -6,6 +6,7 @@ public class Item {
 
     public static final String COLLECTION_NAME = "Itembook";
     public static final String FIELD_USER_ID = "userId";
+    public static final String FIELD_NAME = "name";
 
     String name;
     String location;
