@@ -22,15 +22,12 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,16 +39,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.saher.authapp.R;
 import com.saher.authapp.model.UserSetting;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public class LoginActivity extends AppCompatActivity {
@@ -67,8 +61,6 @@ public class LoginActivity extends AppCompatActivity {
     final CollectionReference userSettingsCollectionReference = db.collection("UserSetting");
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,21 +68,25 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.fullyInitialize();
         callbackmanager = CallbackManager.Factory.create();
         AccessToken token = AccessToken.getCurrentAccessToken();
-        if (token != null){
+        if (token != null) {
             handelFacebookResponse(token);
         }
-        GoogleSignInOptions gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken("41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com").requestEmail().build();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.google_auth_client_id))
+                .requestEmail()
+                .build();
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         findViewById(R.id.sign_in_google_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.sign_in_google_button:
                         signIn();
                         break;
                 }
-
-
             }
         });
 
@@ -122,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
         btnLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "not successful", Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             } else {
                                 SharedPreferences sharedPreferences;
                                 sharedPreferences = getSharedPreferences("emailandpassword", Context.MODE_PRIVATE);
@@ -175,111 +172,101 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText(LoginActivity.this,"cancel",Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "cancel", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(FacebookException exception) {
-                Toast.makeText(LoginActivity.this,"error "+exception.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "error " + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
-
-       // loginButton.callOnClick();
-
-    }
-    private void signIn(){
-        Intent signInIntent=mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent,1);
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask){
-        try{
-            GoogleSignInAccount account=completedTask.getResult(ApiException.class);
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, 1);
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             firebaseAuthWithGoogle(account.getIdToken());
-            Toast.makeText(LoginActivity.this,account.getEmail(),Toast.LENGTH_LONG).show();
-        }catch (ApiException e){
-            Toast.makeText(LoginActivity.this,e.toString(),Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, account.getEmail(), Toast.LENGTH_LONG).show();
+        } catch (ApiException e) {
+            Toast.makeText(LoginActivity.this, e.toString(), Toast.LENGTH_LONG).show();
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackmanager.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1){
-            Task<GoogleSignInAccount>task=GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);}}
+        if (requestCode == 1) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
 
-    private void firebaseAuthWithGoogle(String idToken){
-        AuthCredential credential= GoogleAuthProvider.getCredential(idToken,null);
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    FirebaseUser user=firebaseAuth.getCurrentUser();
-                    String useeerid=user.getUid();
-                    userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,useeerid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                if (task.isSuccessful()) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    String useeerid = user.getUid();
+                    userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID, useeerid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if (queryDocumentSnapshots.getDocuments().size() == 0) {
-                                userSettingsCollectionReference.add(new UserSetting(useeerid,"syria","","English"));
+                                userSettingsCollectionReference.add(new UserSetting(useeerid, "syria", "", "English"));
                             } else {
                                 return;
                             }
                             finish();
                         }
                     });
-                    Toast.makeText(LoginActivity.this,user.getEmail(),Toast.LENGTH_LONG).show();
-                    Intent i=new Intent(LoginActivity.this,HomeActivity.class);
-                    i.putExtra("comefromgoogle",5);
+                    Toast.makeText(LoginActivity.this, user.getEmail(), Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                    i.putExtra("comefromgoogle", 5);
                     startActivity(i);
-                }else{
-                    Toast.makeText(LoginActivity.this,"error habibi",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-
-
-
-
-
     private void handelFacebookAuth(AccessToken token) {
-        AuthCredential credential= FacebookAuthProvider.getCredential(token.getToken());
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    FirebaseUser user=firebaseAuth.getCurrentUser();
-                    String useeerid=user.getUid();
-                    userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,useeerid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                if (task.isSuccessful()) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    String useeerid = user.getUid();
+                    userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID, useeerid).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if (queryDocumentSnapshots.getDocuments().size() == 0) {
-                                userSettingsCollectionReference.add(new UserSetting(useeerid,"syria","","English"));
+                                userSettingsCollectionReference.add(new UserSetting(useeerid, "syria", "", "English"));
                             } else {
-                               return;
+                                return;
                             }
                             finish();
                         }
                     });
-                    Intent i=new Intent(LoginActivity.this,HomeActivity.class);
-                    i.putExtra("comefromface",5);
+                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                    i.putExtra("comefromface", 5);
                     startActivity(i);
 
-                } else{
-                    Toast.makeText(LoginActivity.this,"authrnication failed",Toast.LENGTH_LONG).show();
-
-
+                } else {
+                    Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
 
     }
-
-
-
-
 
 
     private void handelFacebookResponse(AccessToken token) {
@@ -306,8 +293,5 @@ public class LoginActivity extends AppCompatActivity {
         parameters.putString("fields", "first_name,last_name,email,id");
         request.setParameters(parameters);
         request.executeAsync();
-
-
-
     }
 }
