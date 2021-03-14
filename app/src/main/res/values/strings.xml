@@ -40,5 +40,8 @@
     <string name="facebook_app_id">799082930678033</string>
     <string name="fb_login_protocol_scheme">799082930678033</string>
 
+    <string name="google_auth_client_id">41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com</string>
+    <string name="google_auth_client_secret"></string>
+
 
 </resources>
