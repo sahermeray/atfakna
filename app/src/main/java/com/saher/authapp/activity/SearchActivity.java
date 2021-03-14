@@ -45,10 +45,19 @@ public class SearchActivity extends AppCompatActivity {
             doMySearch(query);
         }
     }
-    public void doMySearch(String s ){
+    public void doMySearch(String s){
+        String strSearch=s;
+        Toast.makeText(SearchActivity.this,"strSearch "+strSearch,Toast.LENGTH_LONG).show();
+        int strlength=strSearch.length();
+        String strFrontCode=strSearch.substring(0,strlength-1);
+        String strEndCode=strSearch.substring(strlength-1,strSearch.length());
+        String startcode=strSearch;
+        char x=(char) (strEndCode.charAt(0)+1);
+        String endcode=strFrontCode+String.valueOf(x);
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        Query query = itemRef.whereEqualTo(Item.FIELD_NAME,s);
+        Query query = itemRef.whereGreaterThanOrEqualTo(Item.FIELD_NAME,startcode).whereLessThan(Item.FIELD_NAME,endcode);
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>()
                 .setQuery(query, Item.class)
                 .build();
