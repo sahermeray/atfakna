@@ -12,20 +12,24 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.saher.authapp.OnRecyclerViewItemClickListener;
 import com.saher.authapp.R;
 import com.saher.authapp.adapter.ItemAdapter;
 import com.saher.authapp.model.Item;
+import com.saher.authapp.model.UserSetting;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String JARGON = "test";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference itemRef = db.collection(Item.COLLECTION_NAME);
+    final CollectionReference userSettingsCollectionReference = db.collection("UserSetting");
     RecyclerView recyclerView;
 
     @Override
@@ -57,7 +61,42 @@ public class SearchActivity extends AppCompatActivity {
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        Query query = itemRef.whereGreaterThanOrEqualTo(Item.FIELD_NAME,startcode).whereLessThan(Item.FIELD_NAME,endcode);
+        userSettingsCollectionReference.whereEqualTo(UserSetting.FIELD_USER_ID,currentUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+               UserSetting u=queryDocumentSnapshots.getDocuments().get(0).toObject(UserSetting.class);
+                String currentUserCountry=u.getUserCountry();
+                Toast.makeText(SearchActivity.this,"currentusercountry "+currentUserCountry,Toast.LENGTH_LONG).show();
+                Query query = itemRef.whereEqualTo(Item.FIELD_LOCATION,currentUserCountry).whereGreaterThanOrEqualTo(Item.FIELD_NAME,startcode).whereLessThan(Item.FIELD_NAME,endcode);
+                FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>()
+                        .setQuery(query, Item.class)
+                        .build();
+                ItemAdapter adapter = new ItemAdapter(options, new OnRecyclerViewItemClickListener() {
+                    @Override
+                    public void onItemClick(String Item_Id) {
+                        if ((currentUser != null && currentUser.isEmailVerified())) {
+                            Intent i = new Intent(getBaseContext(), ViewItemActivity.class);
+                            i.putExtra("COMING_FROM_USER_ACTIVITY", 1);
+                            i.putExtra("ITEM_ID", Item_Id);
+                            startActivity(i);
+                        } else if (currentUser == null) {
+                            Intent i = new Intent(getBaseContext(), ViewItemActivity.class);
+                            i.putExtra("COMING_FROM_USER_ACTIVITY", 2);
+                            i.putExtra("ITEM_ID", Item_Id);
+                            startActivity(i);
+                        }
+                    }
+
+                }, SearchActivity.this);
+                adapter.startListening();
+                adapter.notifyDataSetChanged();
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this, 2));
+                recyclerView.setAdapter(adapter);
+            }
+        });
+
+        /*Query query = itemRef.whereGreaterThanOrEqualTo(Item.FIELD_NAME,startcode).whereLessThan(Item.FIELD_NAME,endcode);
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>()
                 .setQuery(query, Item.class)
                 .build();
@@ -83,7 +122,7 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(adapter);
-
+*/
     }
 
     /*@Override
