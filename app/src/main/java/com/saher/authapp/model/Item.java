@@ -7,6 +7,7 @@ public class Item {
     public static final String COLLECTION_NAME = "Itembook";
     public static final String FIELD_USER_ID = "userId";
     public static final String FIELD_NAME = "name";
+    public static final String FIELD_LOCATION = "location";
 
     String name;
     String location;
