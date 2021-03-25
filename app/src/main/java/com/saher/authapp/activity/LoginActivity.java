@@ -74,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("41273658110-oid1mafvl4085brhfqfrd8u50pim0dp1.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -218,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if (queryDocumentSnapshots.getDocuments().size() == 0) {
-                                userSettingsCollectionReference.add(new UserSetting(useeerid, "syria", "", "English"));
+                                userSettingsCollectionReference.add(new UserSetting(useeerid, "Syrian Arab Republic", "", "English"));
                             } else {
                                 return;
                             }
@@ -248,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if (queryDocumentSnapshots.getDocuments().size() == 0) {
-                                userSettingsCollectionReference.add(new UserSetting(useeerid, "syria", "", "English"));
+                                userSettingsCollectionReference.add(new UserSetting(useeerid, "Syrian Arab Republic", "", "English"));
                             } else {
                                 return;
                             }

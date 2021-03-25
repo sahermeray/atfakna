@@ -86,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
         final FirebaseUser useriuser = firebaseAuth.getCurrentUser();
         if(useriuser!=null) {
             for (UserInfo user : useriuser.getProviderData()) {
-                if (user.getProviderId().equals("facebook.com")) {
+                if ((user.getProviderId().equals("facebook.com"))||(user.getProviderId().equals("google.com"))) {
                     x = 10;
                     break;
                 }
