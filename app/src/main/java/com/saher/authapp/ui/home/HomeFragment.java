@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
 
         if(user!=null) {
             for (UserInfo userinfo : user.getProviderData()) {
-                if (userinfo.getProviderId().equals("facebook.com")) {
+                if ((userinfo.getProviderId().equals("facebook.com"))||(userinfo.getProviderId().equals("google.com"))) {
                     d = 10;
                     break;
                 }
@@ -137,7 +137,7 @@ public class HomeFragment extends Fragment {
         final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if(currentUser!=null) {
             for (UserInfo user : currentUser.getProviderData()) {
-                if (user.getProviderId().equals("facebook.com")) {
+                if ((user.getProviderId().equals("facebook.com"))||(user.getProviderId().equals("google.com"))) {
                     h = 10;
                     break;
                 }

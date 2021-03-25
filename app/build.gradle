@@ -42,13 +42,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.4'
     implementation 'androidx.navigation:navigation-fragment:2.3.2'
     implementation 'androidx.navigation:navigation-ui:2.3.2'
+    //implementation 'com.facebook.android:account-kit-sdk:5.4.0'
+    //implementation 'com.robbypond:facebook-android-sdk:3.17.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
 
-    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     implementation 'com.hbb20:ccp:2.4.4'
 
 }
